@@ -26,6 +26,25 @@
         <option value="Despesa">Despesa</option>
     </select>
 
+    <label>Data do Lançamento</label>
+    <input type="date" id="dataManual">
+
+    <label>Mês de Referência (Fatura)</label>
+    <select id="mesReferencia">
+        <option value="Janeiro">Janeiro</option>
+        <option value="Fevereiro">Fevereiro</option>
+        <option value="Março">Março</option>
+        <option value="Abril">Abril</option>
+        <option value="Maio">Maio</option>
+        <option value="Junho">Junho</option>
+        <option value="Julho">Julho</option>
+        <option value="Agosto">Agosto</option>
+        <option value="Setembro">Setembro</option>
+        <option value="Outubro">Outubro</option>
+        <option value="Novembro">Novembro</option>
+        <option value="Dezembro">Dezembro</option>
+    </select>
+
     <label>Descrição</label>
     <input type="text" id="desc" placeholder="Ex: Aluguel, Salário...">
 
@@ -97,6 +116,14 @@
         }
     };
 
+    // Preencher data de hoje e mês atual automaticamente
+    window.onload = function() {
+        const hoje = new Date();
+        document.getElementById('dataManual').value = hoje.toISOString().split('T')[0];
+        const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        document.getElementById('mesReferencia').value = meses[hoje.getMonth()];
+    };
+
     function mascaraMoeda(i) {
         let v = i.value.replace(/\D/g, ''); 
         if (v === "") return;
@@ -110,10 +137,8 @@
         const tipo = document.getElementById('tipo').value;
         const card = document.getElementById('meuCard');
         const secaoRec = document.getElementById('secaoRecorrencia');
-        
         card.style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
         secaoRec.classList.toggle('hidden', tipo === "Receita");
-
         const catSelect = document.getElementById('categoria');
         catSelect.innerHTML = "";
         Object.keys(dadosCategorias[tipo]).forEach(cat => {
@@ -156,6 +181,8 @@
 
         const payload = {
             tipo: document.getElementById('tipo').value,
+            dataManual: document.getElementById('dataManual').value,
+            mesReferencia: document.getElementById('mesReferencia').value,
             descricao: document.getElementById('desc').value,
             valorTotal: valorOriginal,
             cartao: document.getElementById('cartao').value,

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Financeiro Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f9; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-width: 450px; margin: auto; border-top: 8px solid #3498db; }
+        label { font-weight: bold; display: block; margin-top: 15px; color: #444; }
+        select, input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .secao-extra { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px dashed #ccc; }
+        button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="meuCard">
+    <h2>📊 Controle Financeiro</h2>
+
+    <label>Tipo</label>
+    <select id="tipo" onchange="configurarInterface()">
+        <option value="Receita">Receita</option>
+        <option value="Despesa">Despesa</option>
+    </select>
+
+    <label>Descrição</label>
+    <input type="text" id="desc" placeholder="Ex: Aluguel, Salário...">
+
+    <label>Valor Total (R$)</label>
+    <input type="text" id="valor" placeholder="0,00" oninput="mascaraMoeda(this)">
+
+    <label>Cartão / Banco</label>
+    <select id="cartao">
+        <option value="Mercado Pago">Mercado Pago</option>
+        <option value="Nubank">Nubank</option>
+        <option value="Inter">Inter</option>
+        <option value="Itaú">Itaú</option>
+    </select>
+
+    <label>Categoria</label>
+    <select id="categoria" onchange="configurarSubcategorias()"></select>
+
+    <label>Subcategoria</label>
+    <select id="subcategoria"></select>
+
+    <label>Tags</label>
+    <select id="tags">
+        <option value="Pessoal">Pessoal</option>
+        <option value="Investimento">Investimento</option>
+        <option value="Contas">Contas</option>
+    </select>
+
+    <div id="secaoRecorrencia" class="secao-extra hidden">
+        <label>Esta despesa é:</label>
+        <select id="recorrencia" onchange="toggleParcelas()">
+            <option value="Unica">Lançamento Único</option>
+            <option value="Fixa">Despesa Fixa (Mensal)</option>
+            <option value="Parcelada">Compra Parcelada</option>
+        </select>
+
+        <div id="divParcelas" class="hidden">
+            <label>Nº de Parcelas</label>
+            <input type="number" id="numParcelas" value="1" min="1">
+        </div>
+    </div>
+
+    <button id="btnSalvar" onclick="salvar()">Salvar na Planilha</button>
+</div>
+
+<script>
+    const dadosCategorias = {
+        "Receita": {
+            "Vales": ["Vale Alimentação", "Vale refeição"],
+            "Investimentos": ["Dividendos", "Rendimento Automático"],
+            "Outros": ["Cashback", "IR a restituir", "Reembolsos Plano de Saúde", "Outras receitas", "Seguros", "Serviços com IR"],
+            "Salário": ["13° salário", "Férias", "PLR", "Salário mensal"]
+        },
+        "Despesa": {
+            "Pessoais": ["Academia", "Barbeiro", "Eletrônicos", "Tratamento estético"],
+            "Alimentação": ["Supermercado", "Feira / Sacolão", "Padaria", "Refeição fora de casa (trabalho)"],
+            "Casa": ["Eletrodomésticos", "Móveis", "Utensílios / Decoração", "Reformas", "Lavanderia"],
+            "Investimentos": ["CDB / Renda Fixa", "Ações", "Reserva de Emergência", "Rendimento Automático", "Dividendos"],
+            "Viagem": ["Aluguel da casa", "Aluguel do carro", "Estacionamento","Gasolina", "Pedágio", "Refeições", "Passeios"],
+            "Diversas": ["Outros gastos", "IR a pagar"],
+            "Lazer": ["Restaurantes / bares / festas", "Café da manhã / tarde", "Ifood"],
+            "Contas": ["Celular", "Condomínio", "Conta de luz", "Conta de água", "Financiamento", "Internet","Gás"],
+            "Educação": ["Faculdade", "Cursos online"],
+            "Assinaturas": ["Assinaturas diversas", "Memória adicional", "Seguros", "Spotify", "Streaming"],
+            "Saúde": ["Medicamentos", "Terapia", "Médicos / Exames fora do plano de saúde"],
+            "Transporte": ["Uber", "Estacionamento", "Pedágio"],
+            "Vestiário": ["Calçados", "Roupas"],
+            "Presentes": ["Doações", "Presentes diversos"]
+        }
+    };
+
+    function mascaraMoeda(i) {
+        let v = i.value.replace(/\D/g, ''); 
+        if (v === "") return;
+        v = (v / 100).toFixed(2) + '';
+        v = v.replace(".", ",");
+        v = v.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+        i.value = v;
+    }
+
+    function configurarInterface() {
+        const tipo = document.getElementById('tipo').value;
+        const card = document.getElementById('meuCard');
+        const secaoRec = document.getElementById('secaoRecorrencia');
+        
+        card.style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
+        secaoRec.classList.toggle('hidden', tipo === "Receita");
+
+        const catSelect = document.getElementById('categoria');
+        catSelect.innerHTML = "";
+        Object.keys(dadosCategorias[tipo]).forEach(cat => {
+            let opt = document.createElement('option');
+            opt.value = cat; opt.innerHTML = cat;
+            catSelect.appendChild(opt);
+        });
+        configurarSubcategorias();
+    }
+
+    function configurarSubcategorias() {
+        const tipo = document.getElementById('tipo').value;
+        const cat = document.getElementById('categoria').value;
+        const subSelect = document.getElementById('subcategoria');
+        subSelect.innerHTML = "";
+        dadosCategorias[tipo][cat].forEach(sub => {
+            let opt = document.createElement('option');
+            opt.value = sub; opt.innerHTML = sub;
+            subSelect.appendChild(opt);
+        });
+    }
+
+    function toggleParcelas() {
+        const rec = document.getElementById('recorrencia').value;
+        document.getElementById('divParcelas').classList.toggle('hidden', rec !== 'Parcelada');
+    }
+
+    function salvar() {
+        const url = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec";
+        const btn = document.getElementById('btnSalvar');
+        const valorOriginal = document.getElementById('valor').value.replace(/\./g, '').replace(',', '.');
+
+        if (!valorOriginal || parseFloat(valorOriginal) <= 0 || document.getElementById('desc').value === "") {
+            alert("Preencha todos os campos corretamente!");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Enviando...";
+
+        const payload = {
+            tipo: document.getElementById('tipo').value,
+            descricao: document.getElementById('desc').value,
+            valorTotal: valorOriginal,
+            cartao: document.getElementById('cartao').value,
+            categoria: document.getElementById('categoria').value,
+            subcategoria: document.getElementById('subcategoria').value,
+            tags: document.getElementById('tags').value,
+            recorrencia: document.getElementById('recorrencia').value,
+            numParcelas: document.getElementById('numParcelas').value
+        };
+
+        fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
+        .then(() => {
+            alert("Sucesso!");
+            btn.disabled = false;
+            btn.innerText = "Salvar na Planilha";
+            document.getElementById('desc').value = "";
+            document.getElementById('valor').value = "";
+        });
+    }
+
+    configurarInterface();
+</script>
+</body>
+</html>

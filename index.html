@@ -14,7 +14,7 @@
         .row div { flex: 1; }
         button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
-        .hidden { display: none; } /* ESTA CLASSE É O QUE FAZ SUMIR */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -45,12 +45,7 @@
         </div>
         <div>
             <select id="anoReferencia">
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
+                <option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option>
             </select>
         </div>
     </div>
@@ -91,6 +86,12 @@
             <option value="Unica">Lançamento Único</option>
             <option value="Fixa">Despesa Fixa (Mensal)</option>
             <option value="Parcelada">Compra Parcelada</option>
+        </select>
+
+        <label>É no crédito?</label>
+        <select id="isCredito">
+            <option value="Não">Não (Débito/Dinheiro)</option>
+            <option value="Sim">Sim (Cartão de Crédito)</option>
         </select>
 
         <div id="divParcelas" class="hidden">
@@ -134,7 +135,7 @@
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         document.getElementById('mesReferencia').value = meses[hoje.getMonth()];
         document.getElementById('anoReferencia').value = hoje.getFullYear();
-        configurarInterface(); // Garante que começa com a interface certa (Receita por padrão)
+        configurarInterface();
     };
 
     function mascaraMoeda(i) {
@@ -152,14 +153,10 @@
         const secaoRec = document.getElementById('secaoRecorrencia');
         const divTags = document.getElementById('divTags');
 
-        // Mudar cor da borda
         card.style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
-        
-        // MOSTRAR/ESCONDER CAMPOS INTELIGENTES
         secaoRec.classList.toggle('hidden', tipo === "Receita");
         divTags.classList.toggle('hidden', tipo === "Receita");
 
-        // Atualizar Categorias
         const catSelect = document.getElementById('categoria');
         catSelect.innerHTML = "";
         Object.keys(dadosCategorias[tipo]).forEach(cat => {
@@ -188,7 +185,7 @@
     }
 
     function salvar() {
-        const url = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec"; // Coloque sua URL aqui
+        const url = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec";
         const btn = document.getElementById('btnSalvar');
         const valorOriginal = document.getElementById('valor').value.replace(/\./g, '').replace(',', '.');
 
@@ -212,12 +209,13 @@
             subcategoria: document.getElementById('subcategoria').value,
             tags: document.getElementById('tipo').value === "Receita" ? "" : document.getElementById('tags').value,
             recorrencia: document.getElementById('recorrencia').value,
+            isCredito: document.getElementById('tipo').value === "Receita" ? "Não" : document.getElementById('isCredito').value,
             numParcelas: document.getElementById('numParcelas').value
         };
 
         fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
         .then(() => {
-            alert("✅ Lançamento realizado!");
+            alert("Sucesso!");
             btn.disabled = false;
             btn.innerText = "Salvar na Planilha";
             document.getElementById('desc').value = "";

@@ -10,6 +10,8 @@
         label { font-weight: bold; display: block; margin-top: 15px; color: #444; }
         select, input { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         .secao-extra { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; border: 1px dashed #ccc; }
+        .row { display: flex; gap: 10px; }
+        .row div { flex: 1; }
         button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         .hidden { display: none; }
@@ -29,21 +31,26 @@
     <label>Data do Lançamento</label>
     <input type="date" id="dataManual">
 
-    <label>Mês de Referência (Fatura)</label>
-    <select id="mesReferencia">
-        <option value="Janeiro">Janeiro</option>
-        <option value="Fevereiro">Fevereiro</option>
-        <option value="Março">Março</option>
-        <option value="Abril">Abril</option>
-        <option value="Maio">Maio</option>
-        <option value="Junho">Junho</option>
-        <option value="Julho">Julho</option>
-        <option value="Agosto">Agosto</option>
-        <option value="Setembro">Setembro</option>
-        <option value="Outubro">Outubro</option>
-        <option value="Novembro">Novembro</option>
-        <option value="Dezembro">Dezembro</option>
-    </select>
+    <label>Referência da Fatura (Mês/Ano)</label>
+    <div class="row">
+        <div>
+            <select id="mesReferencia">
+                <option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option>
+                <option value="Março">Março</option><option value="Abril">Abril</option>
+                <option value="Maio">Maio</option><option value="Junho">Junho</option>
+                <option value="Julho">Julho</option><option value="Agosto">Agosto</option>
+                <option value="Setembro">Setembro</option><option value="Outubro">Outubro</option>
+                <option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option>
+            </select>
+        </div>
+        <div>
+            <select id="anoReferencia">
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+            </select>
+        </div>
+    </div>
 
     <label>Descrição</label>
     <input type="text" id="desc" placeholder="Ex: Aluguel, Salário...">
@@ -66,12 +73,14 @@
     <label>Subcategoria</label>
     <select id="subcategoria"></select>
 
-    <label>Tags</label>
-    <select id="tags">
-        <option value="Pessoal">Pessoal</option>
-        <option value="Investimento">Investimento</option>
-        <option value="Contas">Contas</option>
-    </select>
+    <div id="divTags">
+        <label>Tags</label>
+        <select id="tags">
+            <option value="Pessoal">Pessoal</option>
+            <option value="Investimento">Investimento</option>
+            <option value="Contas">Contas</option>
+        </select>
+    </div>
 
     <div id="secaoRecorrencia" class="secao-extra hidden">
         <label>Esta despesa é:</label>
@@ -116,12 +125,13 @@
         }
     };
 
-    // Preencher data de hoje e mês atual automaticamente
     window.onload = function() {
         const hoje = new Date();
         document.getElementById('dataManual').value = hoje.toISOString().split('T')[0];
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         document.getElementById('mesReferencia').value = meses[hoje.getMonth()];
+        document.getElementById('anoReferencia').value = hoje.getFullYear();
+        configurarInterface();
     };
 
     function mascaraMoeda(i) {
@@ -137,8 +147,14 @@
         const tipo = document.getElementById('tipo').value;
         const card = document.getElementById('meuCard');
         const secaoRec = document.getElementById('secaoRecorrencia');
+        const divTags = document.getElementById('divTags');
+
         card.style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
+        
+        // MOSTRAR/ESCONDER CAMPOS
         secaoRec.classList.toggle('hidden', tipo === "Receita");
+        divTags.classList.toggle('hidden', tipo === "Receita");
+
         const catSelect = document.getElementById('categoria');
         catSelect.innerHTML = "";
         Object.keys(dadosCategorias[tipo]).forEach(cat => {
@@ -183,12 +199,13 @@
             tipo: document.getElementById('tipo').value,
             dataManual: document.getElementById('dataManual').value,
             mesReferencia: document.getElementById('mesReferencia').value,
+            anoReferencia: document.getElementById('anoReferencia').value,
             descricao: document.getElementById('desc').value,
             valorTotal: valorOriginal,
             cartao: document.getElementById('cartao').value,
             categoria: document.getElementById('categoria').value,
             subcategoria: document.getElementById('subcategoria').value,
-            tags: document.getElementById('tags').value,
+            tags: document.getElementById('tipo').value === "Receita" ? "" : document.getElementById('tags').value,
             recorrencia: document.getElementById('recorrencia').value,
             numParcelas: document.getElementById('numParcelas').value
         };
@@ -202,8 +219,6 @@
             document.getElementById('valor').value = "";
         });
     }
-
-    configurarInterface();
 </script>
 </body>
 </html>

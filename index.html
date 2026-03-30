@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor Financeiro Pro Dinâmico</title>
+    <title>Gestor Financeiro Pro</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f9; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-width: 450px; margin: auto; border-top: 8px solid #3498db; }
@@ -15,13 +15,14 @@
         button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         .hidden { display: none; }
-        #loading { text-align: center; color: #3498db; font-weight: bold; margin-bottom: 10px; }
+        #status { text-align: center; font-size: 14px; margin-top: 10px; font-weight: bold; }
+        .loading-text { color: #3498db; }
     </style>
 </head>
 <body>
 
 <div class="card" id="meuCard">
-    <div id="loading">Carregando configurações...</div>
+    <div id="status" class="loading-text">🔄 Carregando configurações...</div>
     <h2>📊 Controle Financeiro</h2>
 
     <label>Tipo</label>
@@ -100,10 +101,13 @@
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec"; // <--- COLOQUE SUA URL AQUI
+    // --- COLOQUE SUA NOVA URL DE DEPLOY ABAIXO ---
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec"; 
+    
     let dadosPlanilha = null;
 
     window.onload = async function() {
+        // Datas iniciais
         const hoje = new Date();
         document.getElementById('dataManual').value = hoje.toISOString().split('T')[0];
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -114,8 +118,11 @@
     };
 
     async function carregarConfiguracoes() {
+        const statusEl = document.getElementById('status');
         try {
             const response = await fetch(URL_SCRIPT);
+            if (!response.ok) throw new Error("Erro na rede");
+            
             dadosPlanilha = await response.json();
             
             // Preencher Bancos
@@ -125,17 +132,20 @@
                 selectBancos.innerHTML += `<option value="${b}">${b}</option>`;
             });
 
-            document.getElementById('loading').style.display = 'none';
+            statusEl.style.display = 'none';
             document.getElementById('btnSalvar').disabled = false;
             document.getElementById('btnSalvar').innerText = "Salvar na Planilha";
             
             configurarInterface();
         } catch (err) {
-            document.getElementById('loading').innerText = "Erro ao carregar dados!";
+            statusEl.innerText = "❌ Erro ao carregar bancos e categorias. Verifique a URL do Script.";
+            statusEl.style.color = "red";
+            console.error(err);
         }
     }
 
     function configurarInterface() {
+        if(!dadosPlanilha) return;
         const tipo = document.getElementById('tipo').value;
         const divTags = document.getElementById('divTags');
         const secaoRec = document.getElementById('secaoRecorrencia');
@@ -147,7 +157,7 @@
         const catSelect = document.getElementById('categoria');
         catSelect.innerHTML = "";
         
-        const categoriasDoTipo = dadosPlanilha.categorias[tipo];
+        const categoriasDoTipo = dadosPlanilha.categorias[tipo] || {};
         Object.keys(categoriasDoTipo).forEach(cat => {
             catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
         });
@@ -160,7 +170,7 @@
         const subSelect = document.getElementById('subcategoria');
         subSelect.innerHTML = "";
         
-        const subs = dadosPlanilha.categorias[tipo][cat] || [];
+        const subs = (dadosPlanilha.categorias[tipo] && dadosPlanilha.categorias[tipo][cat]) ? dadosPlanilha.categorias[tipo][cat] : [];
         subs.forEach(s => {
             subSelect.innerHTML += `<option value="${s}">${s}</option>`;
         });
@@ -208,9 +218,12 @@
 
         try {
             await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            alert("✅ Sucesso!");
-            document.getElementById('desc').value = ""; document.getElementById('valor').value = "";
-        } catch (e) { alert("Erro ao salvar!"); }
+            alert("✅ Lançamento realizado com sucesso!");
+            document.getElementById('desc').value = ""; 
+            document.getElementById('valor').value = "";
+        } catch (e) { 
+            alert("Erro ao conectar com a planilha!"); 
+        }
         btn.disabled = false; btn.innerText = "Salvar na Planilha";
     }
 </script>

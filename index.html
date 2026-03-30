@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor Financeiro Pro</title>
+    <title>Gestor Financeiro Pro Dinâmico</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f9; padding: 20px; }
         .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-width: 450px; margin: auto; border-top: 8px solid #3498db; }
@@ -15,11 +15,13 @@
         button { width: 100%; padding: 15px; background: #3498db; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 25px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
         .hidden { display: none; }
+        #loading { text-align: center; color: #3498db; font-weight: bold; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
 <div class="card" id="meuCard">
+    <div id="loading">Carregando configurações...</div>
     <h2>📊 Controle Financeiro</h2>
 
     <label>Tipo</label>
@@ -57,19 +59,13 @@
     <input type="text" id="valor" placeholder="0,00" oninput="mascaraMoeda(this)">
 
     <label>Cartão / Banco</label>
-    <select id="cartao">
-        <option value="Mercado Pago">Mercado Pago</option>
-        <option value="Nubank">Nubank</option>
-        <option value="Inter">Inter</option>
-        <option value="Itaú">Itaú</option>
-        <option value="Ticket">Ticket</option>
-    </select>
+    <select id="cartao"><option>Aguarde...</option></select>
 
     <label>Categoria</label>
-    <select id="categoria" onchange="configurarSubcategorias()"></select>
+    <select id="categoria" onchange="configurarSubcategorias()"><option>Aguarde...</option></select>
 
     <label>Subcategoria</label>
-    <select id="subcategoria"></select>
+    <select id="subcategoria"><option>Aguarde...</option></select>
 
     <div id="divTags">
         <label>Tags</label>
@@ -100,43 +96,75 @@
         </div>
     </div>
 
-    <button id="btnSalvar" onclick="salvar()">Salvar na Planilha</button>
+    <button id="btnSalvar" onclick="salvar()" disabled>Carregando...</button>
 </div>
 
 <script>
-    const dadosCategorias = {
-        "Receita": {
-            "Vales": ["Vale Alimentação", "Vale refeição"],
-            "Investimentos": ["Dividendos", "Rendimento Automático"],
-            "Outros": ["Cashback", "IR a restituir", "Reembolsos Plano de Saúde", "Outras receitas", "Seguros", "Serviços com IR"],
-            "Salário": ["13° salário", "Férias", "PLR", "Salário mensal"]
-        },
-        "Despesa": {
-            "Pessoais": ["Academia", "Barbeiro", "Eletrônicos", "Tratamento estético"],
-            "Alimentação": ["Supermercado", "Feira / Sacolão", "Padaria", "Refeição fora de casa (trabalho)"],
-            "Casa": ["Eletrodomésticos", "Móveis", "Utensílios / Decoração", "Reformas", "Lavanderia"],
-            "Investimentos": ["CDB / Renda Fixa", "Ações", "Reserva de Emergência", "Rendimento Automático", "Dividendos"],
-            "Viagem": ["Aluguel da casa", "Aluguel do carro", "Estacionamento","Gasolina", "Pedágio", "Refeições", "Passeios"],
-            "Diversas": ["Outros gastos", "IR a pagar"],
-            "Lazer": ["Restaurantes / bares / festas", "Café da manhã / tarde", "Ifood"],
-            "Contas": ["Celular", "Condomínio", "Conta de luz", "Conta de água", "Financiamento", "Internet","Gás"],
-            "Educação": ["Faculdade", "Cursos online"],
-            "Assinaturas": ["Assinaturas diversas", "Memória adicional", "Seguros", "Spotify", "Streaming"],
-            "Saúde": ["Medicamentos", "Terapia", "Médicos / Exames fora do plano de saúde"],
-            "Transporte": ["Uber", "Estacionamento", "Pedágio"],
-            "Vestiário": ["Calçados", "Roupas"],
-            "Presentes": ["Doações", "Presentes diversos"]
-        }
-    };
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec"; // <--- COLOQUE SUA URL AQUI
+    let dadosPlanilha = null;
 
-    window.onload = function() {
+    window.onload = async function() {
         const hoje = new Date();
         document.getElementById('dataManual').value = hoje.toISOString().split('T')[0];
         const meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         document.getElementById('mesReferencia').value = meses[hoje.getMonth()];
         document.getElementById('anoReferencia').value = hoje.getFullYear();
-        configurarInterface();
+        
+        await carregarConfiguracoes();
     };
+
+    async function carregarConfiguracoes() {
+        try {
+            const response = await fetch(URL_SCRIPT);
+            dadosPlanilha = await response.json();
+            
+            // Preencher Bancos
+            const selectBancos = document.getElementById('cartao');
+            selectBancos.innerHTML = "";
+            dadosPlanilha.bancos.forEach(b => {
+                selectBancos.innerHTML += `<option value="${b}">${b}</option>`;
+            });
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('btnSalvar').disabled = false;
+            document.getElementById('btnSalvar').innerText = "Salvar na Planilha";
+            
+            configurarInterface();
+        } catch (err) {
+            document.getElementById('loading').innerText = "Erro ao carregar dados!";
+        }
+    }
+
+    function configurarInterface() {
+        const tipo = document.getElementById('tipo').value;
+        const divTags = document.getElementById('divTags');
+        const secaoRec = document.getElementById('secaoRecorrencia');
+        document.getElementById('meuCard').style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
+        
+        divTags.classList.toggle('hidden', tipo === "Receita");
+        secaoRec.classList.toggle('hidden', tipo === "Receita");
+
+        const catSelect = document.getElementById('categoria');
+        catSelect.innerHTML = "";
+        
+        const categoriasDoTipo = dadosPlanilha.categorias[tipo];
+        Object.keys(categoriasDoTipo).forEach(cat => {
+            catSelect.innerHTML += `<option value="${cat}">${cat}</option>`;
+        });
+        configurarSubcategorias();
+    }
+
+    function configurarSubcategorias() {
+        const tipo = document.getElementById('tipo').value;
+        const cat = document.getElementById('categoria').value;
+        const subSelect = document.getElementById('subcategoria');
+        subSelect.innerHTML = "";
+        
+        const subs = dadosPlanilha.categorias[tipo][cat] || [];
+        subs.forEach(s => {
+            subSelect.innerHTML += `<option value="${s}">${s}</option>`;
+        });
+    }
 
     function mascaraMoeda(i) {
         let v = i.value.replace(/\D/g, ''); 
@@ -147,55 +175,20 @@
         i.value = v;
     }
 
-    function configurarInterface() {
-        const tipo = document.getElementById('tipo').value;
-        const card = document.getElementById('meuCard');
-        const secaoRec = document.getElementById('secaoRecorrencia');
-        const divTags = document.getElementById('divTags');
-
-        card.style.borderTopColor = (tipo === "Receita") ? "#2ecc71" : "#e74c3c";
-        secaoRec.classList.toggle('hidden', tipo === "Receita");
-        divTags.classList.toggle('hidden', tipo === "Receita");
-
-        const catSelect = document.getElementById('categoria');
-        catSelect.innerHTML = "";
-        Object.keys(dadosCategorias[tipo]).forEach(cat => {
-            let opt = document.createElement('option');
-            opt.value = cat; opt.innerHTML = cat;
-            catSelect.appendChild(opt);
-        });
-        configurarSubcategorias();
-    }
-
-    function configurarSubcategorias() {
-        const tipo = document.getElementById('tipo').value;
-        const cat = document.getElementById('categoria').value;
-        const subSelect = document.getElementById('subcategoria');
-        subSelect.innerHTML = "";
-        dadosCategorias[tipo][cat].forEach(sub => {
-            let opt = document.createElement('option');
-            opt.value = sub; opt.innerHTML = sub;
-            subSelect.appendChild(opt);
-        });
-    }
-
     function toggleParcelas() {
         const rec = document.getElementById('recorrencia').value;
         document.getElementById('divParcelas').classList.toggle('hidden', rec !== 'Parcelada');
     }
 
-    function salvar() {
-        const url = "https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec";
+    async function salvar() {
         const btn = document.getElementById('btnSalvar');
         const valorOriginal = document.getElementById('valor').value.replace(/\./g, '').replace(',', '.');
 
         if (!valorOriginal || parseFloat(valorOriginal) <= 0 || document.getElementById('desc').value === "") {
-            alert("Preencha todos os campos corretamente!");
-            return;
+            alert("Preencha tudo corretamente!"); return;
         }
 
-        btn.disabled = true;
-        btn.innerText = "Enviando...";
+        btn.disabled = true; btn.innerText = "Enviando...";
 
         const payload = {
             tipo: document.getElementById('tipo').value,
@@ -213,14 +206,12 @@
             numParcelas: document.getElementById('numParcelas').value
         };
 
-        fetch(url, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) })
-        .then(() => {
-            alert("Sucesso!");
-            btn.disabled = false;
-            btn.innerText = "Salvar na Planilha";
-            document.getElementById('desc').value = "";
-            document.getElementById('valor').value = "";
-        });
+        try {
+            await fetch(URL_SCRIPT, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+            alert("✅ Sucesso!");
+            document.getElementById('desc').value = ""; document.getElementById('valor').value = "";
+        } catch (e) { alert("Erro ao salvar!"); }
+        btn.disabled = false; btn.innerText = "Salvar na Planilha";
     }
 </script>
 </body>

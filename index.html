@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestor Financeiro Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0a0d14;--sf:#111520;--sf2:#161b2a;--sf3:#1c2235;--bd:rgba(255,255,255,0.07);--ac:#00e5b0;--ac2:#4f8eff;--dg:#ff4f6d;--wn:#ffb547;--tx:#e8eaf0;--mt:#6b7280;--r:14px;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -675,6 +675,6 @@ async function submitForm(){
 function showFormMsg(type,html){var el=document.getElementById('formMsg');el.className='form-msg '+type;el.innerHTML=html;el.style.display='block';if(type==='ok')setTimeout(function(){el.style.display='none';},8000);}
 function init(){loadFallback();buildPills();populateForm();applyPF();}
 init();
-<\/script>
+</script>
 </body>
 </html>

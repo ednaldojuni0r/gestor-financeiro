@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -300,7 +299,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
     <div class="section-hdr">
       <div class="section-title">Todos os Lançamentos</div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span class="tx-hint">💡 Duplo clique para editar ou excluir</span>
+        <span class="tx-hint">💡 Clique 2x rápido para editar ou excluir</span>
         <div class="badge" id="txCount">—</div>
       </div>
     </div>
@@ -545,10 +544,16 @@ function renderTx(){
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
   el.innerHTML=tx.map(function(d,i){
     var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',idx=allData.indexOf(d);
-    return '<div class="tx-row" data-idx="'+idx+'" ondblclick="openModal('+idx+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
+    return '<div class="tx-row" data-idx="'+idx+'" ondblclick="openModal('+idx+')" onclick="handleTxClick(event,'+idx+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
   }).join('');
 }
 /* ═══ MODAL ═══ */
+var lastClickIdx=-1,lastClickTime=0;
+function handleTxClick(e,idx){
+  var now=Date.now();
+  if(lastClickIdx===idx&&now-lastClickTime<500){openModal(idx);lastClickIdx=-1;return;}
+  lastClickIdx=idx;lastClickTime=now;
+}
 function openModal(idx){
   var d=allData[idx];if(!d)return;editingIdx=idx;
   modalTipo=d.tipo;
@@ -666,4 +671,3 @@ init();
 <\/script>
 </body>
 </html>
-```

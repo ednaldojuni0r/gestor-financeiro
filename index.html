@@ -543,16 +543,25 @@ function renderTx(){
   var el=document.getElementById('txBody');
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
   el.innerHTML=tx.map(function(d,i){
-    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',idx=allData.indexOf(d);
-    return '<div class="tx-row" data-idx="'+idx+'" ondblclick="openModal('+idx+')" onclick="handleTxClick(event,'+idx+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
+    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',ri=d.rowIndex||0;
+    return '<div class="tx-row" data-ri="'+ri+'" ondblclick="openModalByRi('+ri+')" onclick="handleTxClick(event,'+ri+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
   }).join('');
 }
 /* ═══ MODAL ═══ */
 var lastClickIdx=-1,lastClickTime=0;
-function handleTxClick(e,idx){
+function handleTxClick(e,ri){
   var now=Date.now();
-  if(lastClickIdx===idx&&now-lastClickTime<500){openModal(idx);lastClickIdx=-1;return;}
-  lastClickIdx=idx;lastClickTime=now;
+  if(lastClickIdx===ri&&now-lastClickTime<500){openModalByRi(ri);lastClickIdx=-1;return;}
+  lastClickIdx=ri;lastClickTime=now;
+}
+function openModalByRi(ri){
+  var found=null;
+  for(var i=0;i<allData.length;i++){if(allData[i].rowIndex===ri){found=i;break;}}
+  if(found===null){
+    // fallback: procura por posição se rowIndex não bater
+    found=ri<allData.length?ri:0;
+  }
+  openModal(found);
 }
 function openModal(idx){
   var d=allData[idx];if(!d)return;editingIdx=idx;

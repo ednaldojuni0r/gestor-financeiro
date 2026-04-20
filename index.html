@@ -543,7 +543,7 @@ function renderTx(){
   var el=document.getElementById('txBody');
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
   el.innerHTML=tx.map(function(d,i){
-    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',ri=d.rowIndex||0;
+    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',idx=ri=d.rowIndex||0;
     return '<div class="tx-row" data-ri="'+ri+'" ondblclick="openModalByRi('+ri+')" onclick="handleTxClick(event,'+ri+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
   }).join('');
 }
@@ -556,14 +556,11 @@ function handleTxClick(e,ri){
 }
 function openModalByRi(ri){
   var found=null;
-  for(var i=0;i<allData.length;i++){if(allData[i].rowIndex===ri){found=i;break;}}
-  if(found===null){
-    // fallback: procura por posição se rowIndex não bater
-    found=ri<allData.length?ri:0;
-  }
+  for(var i=0;i<allData.length;i++){if((allData[i].rowIndex||0)===ri){found=i;break;}}
+  if(found===null){found=0;}
   openModal(found);
 }
-function openModalByRi(ri){var found=null;for(var i=0;i<allData.length;i++){if(allData[i].rowIndex===ri){found=i;break;}}if(found===null){found=0;}openModal(found);} + Enter + function openModal(idx){
+function openModal(idx){
   var d=allData[idx];if(!d)return;editingIdx=idx;
   modalTipo=d.tipo;
   document.getElementById('eTipoR').className='radio-btn'+(d.tipo==='Receita'?' sel-r':'');
@@ -588,7 +585,7 @@ function openModalByRi(ri){var found=null;for(var i=0;i<allData.length;i++){if(a
   document.getElementById('eSaveBtn').disabled=false;
   document.getElementById('eDelBtn').disabled=false;
   document.querySelectorAll('.tx-row').forEach(function(r){r.classList.remove('editing');});
-  var rowEl=document.querySelector('.tx-row[data-ri="'+ri+'"]');if(rowEl)rowEl.classList.add('editing');
+  var rowEl=document.querySelector('.tx-row[data-idx="'+idx+'"]');if(rowEl)rowEl.classList.add('editing');
   document.getElementById('editModal').classList.add('show');
 }
 function closeModal(){document.getElementById('editModal').classList.remove('show');document.querySelectorAll('.tx-row').forEach(function(r){r.classList.remove('editing');});editingIdx=null;}
@@ -620,7 +617,7 @@ async function confirmDelete(){
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify({acao:'delete',rowIndex:d.rowIndex}),mode:'no-cors'});
     // Remove localmente
-    var globalIdx=ri=d.rowIndex||0;if(globalIdx!==-1)allData.splice(globalIdx,1);
+    var globalIdx=allData.indexOf(d);if(globalIdx!==-1)allData.splice(globalIdx,1);
     // Reindexar rowIndex dos próximos (pois a linha foi removida)
     for(var i=globalIdx;i<allData.length;i++){if(allData[i].rowIndex>d.rowIndex)allData[i].rowIndex--;}
     showModalMsg('ok','✅ Lançamento excluído! Sincronize para confirmar.');

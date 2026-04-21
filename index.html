@@ -307,9 +307,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <button class="filter-btn active" onclick="setTxFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setTxFilter('Receita',this)">Receitas</button>
       <button class="filter-btn" onclick="setTxFilter('Despesa',this)">Despesas</button>
-    </div>
+      <input id="fBusca" type="text" placeholder="Buscar..." oninput="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;min-width:180px;">
+      <select id="fFiltCat" onchange="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--mt);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;"><option value="">Todas categorias</option></select>
+    </div></div>
     <div class="tx-table">
-      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span>Mês Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
+      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span style="cursor:pointer" onclick="sortTx('mes')">Mês Ref.<span id="sMs"> ↕</span></span><span style="cursor:pointer" onclick="sortTx('data')">Data<span id="sDt"> ↕</span></span><span style="cursor:pointer;text-align:right" onclick="sortTx('valor')">Valor<span id="sVl"> ↕</span></span><span>Tipo</span></div>
       <div id="txBody"></div>
     </div>
   </div>
@@ -535,10 +537,14 @@ function renderHBar(){
   charts['hbar']=new Chart(document.getElementById('hbarChart').getContext('2d'),{type:'bar',data:{labels:s.map(function(e){return e[0];}),datasets:[{label:'Despesas',data:s.map(function(e){return e[1];}),backgroundColor:s.map(function(e){return gc(e[0],.75);}),borderColor:s.map(function(e){return gc(e[0]);}),borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return ' '+fmt(c.raw);}}})},scales:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:TK}}}});
 }
 function setTxFilter(f,btn){txFilter=f;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTx();}
-function renderTx(){
+function renderTx(){popularCats();
+  var busca=(document.getElementById('fBusca')||{}).value||'';
+  var cf=(document.getElementById('fFiltCat')||{}).value||'';
   var tx=filtered.slice();
   if(txFilter==='Receita'||txFilter==='Despesa')tx=tx.filter(function(d){return d.tipo===txFilter;});
-  tx.sort(function(a,b){var da=parseDt(a.data),db=parseDt(b.data);return db&&da?db-da:0;});
+  if(busca)tx=tx.filter(function(d){return(d.desc||'').toLowerCase().includes(busca.toLowerCase())||(d.cat||'').toLowerCase().includes(busca.toLowerCase());});
+  if(cf)tx=tx.filter(function(d){return d.cat===cf;});
+  tx.sort(function(a,b){var v=0;if(sortCol==='data'){var da=parseDt(a.data),db=parseDt(b.data);v=da&&db?da-db:0;}else if(sortCol==='mes'){v=(a.mesKey||'').localeCompare(b.mesKey||'');}else if(sortCol==='valor'){v=a.valor-b.valor;}return v*sortDir;});
   document.getElementById('txCount').textContent=tx.length+' registros';
   var el=document.getElementById('txBody');
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
@@ -548,7 +554,9 @@ function renderTx(){
   }).join('');
 }
 /* ═══ MODAL ═══ */
-var lastClickIdx=-1,lastClickTime=0;
+var lastClickIdx=-1,lastClickTime=0,sortCol="data",sortDir=-1;
+function sortTx(c){sortDir=sortCol===c?sortDir*-1:-1;sortCol=c;["mes","data","valor"].forEach(function(k){var e=document.getElementById({mes:"sMs",data:"sDt",valor:"sVl"}[k]);if(e)e.textContent=k===sortCol?(sortDir===1?" ↑":" ↓"):" ↕";});renderTx();}
+function popularCats(){var s=document.getElementById("fFiltCat");if(!s)return;var cv=s.value;var cats=[...new Set(filtered.map(function(d){return d.cat;}))].filter(Boolean).sort();s.innerHTML="<option value=\"\"\>Todas categorias</option>";cats.forEach(function(c){s.innerHTML+="<option value=\""+c+"\">"+c+"</option>";});s.value=cv;}
 function handleTxClick(e,ri){
   var now=Date.now();
   if(lastClickIdx===ri&&now-lastClickTime<500){openModalByRi(ri);lastClickIdx=-1;return;}

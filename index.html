@@ -184,7 +184,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 
     <div class="form-grid" style="margin-bottom:14px;">
       <div class="fg s2"><div class="flabel">Descrição</div><input type="text" class="finput" id="eDesc"></div>
-      <div class="fg"><div class="flabel">Valor (R$)</div><input type="text" class="finput" id="eValor" inputmode="decimal"></div>
+      <div class="fg"><div class="flabel">Valor (R$)</div><input type="number" class="finput" id="eValor" step="0.01" min="0"></div>
       <div class="fg"><div class="flabel">Cartão / Banco</div><select class="fselect" id="eCartao"></select></div>
       <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="eCat" onchange="onModalCatChange()"></select></div>
       <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="eSubcat"></select></div>
@@ -346,7 +346,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <div class="form-section">Detalhes</div>
       <div class="form-grid">
         <div class="fg s2"><div class="flabel">Descrição</div><input type="text" class="finput" id="fDesc" placeholder="Ex: Almoço, Netflix, Salário..."></div>
-        <div class="fg"><div class="flabel">Valor Total (R$)</div><input type="text" class="finput" id="fValor" placeholder="0,00" inputmode="decimal"></div>
+        <div class="fg"><div class="flabel">Valor Total (R$)</div><input type="number" class="finput" id="fValor" placeholder="0.00" step="0.01" min="0"></div>
         <div class="fg"><div class="flabel">Cartão / Banco</div><select class="fselect" id="fCartao"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="fCat" onchange="onCatChange()"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="fSubcat"><option value="">Selecione a categoria</option></select></div>
@@ -642,7 +642,7 @@ async function saveEdit(){
   if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','⚠️ Preencha Data, Mês/Ano, Descrição e Valor.');return;}
   var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='💾 Salvando...';
   var dtParts=dataVal.split('-');var dataFmt=dtParts[2]+'/'+dtParts[1]+'/'+dtParts[0];
-  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,'').replace(',','.')),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
+  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(valorRaw),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
@@ -681,18 +681,6 @@ async function submitForm(){
   btn.disabled=false;btn.textContent='💾 Salvar no Google Sheets';
 }
 function showFormMsg(type,html){var el=document.getElementById('formMsg');el.className='form-msg '+type;el.innerHTML=html;el.style.display='block';if(type==='ok')setTimeout(function(){el.style.display='none';},8000);}
-document.addEventListener('DOMContentLoaded',function(){
-['fValor','eValor'].forEach(function(id){
-  var el=document.getElementById(id);
-  if(!el)return;
-  el.addEventListener('input',function(){
-    var v=this.value.replace(/[^0-9]/g,'');
-    if(!v){this.value='';return;}
-    var n=parseInt(v)/100;
-    this.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-  });
-});
-});
 function init(){loadFallback();buildPills();populateForm();applyPF();}
 init();
 </script>

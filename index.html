@@ -184,7 +184,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 
     <div class="form-grid" style="margin-bottom:14px;">
       <div class="fg s2"><div class="flabel">Descrição</div><input type="text" class="finput" id="eDesc"></div>
-      <div class="fg"><div class="flabel">Valor (R$)</div><input type="number" class="finput" id="eValor" step="0.01" min="0"></div>
+      <div class="fg"><div class="flabel">Valor (R$)</div><input type="text" class="finput" id="eValor" inputmode="decimal"></div>
       <div class="fg"><div class="flabel">Cartão / Banco</div><select class="fselect" id="eCartao"></select></div>
       <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="eCat" onchange="onModalCatChange()"></select></div>
       <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="eSubcat"></select></div>
@@ -307,11 +307,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <button class="filter-btn active" onclick="setTxFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setTxFilter('Receita',this)">Receitas</button>
       <button class="filter-btn" onclick="setTxFilter('Despesa',this)">Despesas</button>
-      <input id="fBusca" type="text" placeholder="Buscar..." oninput="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;min-width:180px;">
-      <select id="fFiltCat" onchange="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--mt);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;"><option value="">Todas categorias</option></select>
-    </div></div>
+    </div>
     <div class="tx-table">
-      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span style="cursor:pointer" onclick="sortTx('mes')">Mês Ref.<span id="sMs"> ↕</span></span><span style="cursor:pointer" onclick="sortTx('data')">Data<span id="sDt"> ↕</span></span><span style="cursor:pointer;text-align:right" onclick="sortTx('valor')">Valor<span id="sVl"> ↕</span></span><span>Tipo</span></div>
+      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span>Mês Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
       <div id="txBody"></div>
     </div>
   </div>
@@ -346,7 +344,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <div class="form-section">Detalhes</div>
       <div class="form-grid">
         <div class="fg s2"><div class="flabel">Descrição</div><input type="text" class="finput" id="fDesc" placeholder="Ex: Almoço, Netflix, Salário..."></div>
-        <div class="fg"><div class="flabel">Valor Total (R$)</div><input type="number" class="finput" id="fValor" placeholder="0.00" step="0.01" min="0"></div>
+        <div class="fg"><div class="flabel">Valor Total (R$)</div><input type="text" class="finput" id="fValor" placeholder="0,00" inputmode="decimal"></div>
         <div class="fg"><div class="flabel">Cartão / Banco</div><select class="fselect" id="fCartao"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="fCat" onchange="onCatChange()"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="fSubcat"><option value="">Selecione a categoria</option></select></div>
@@ -537,14 +535,10 @@ function renderHBar(){
   charts['hbar']=new Chart(document.getElementById('hbarChart').getContext('2d'),{type:'bar',data:{labels:s.map(function(e){return e[0];}),datasets:[{label:'Despesas',data:s.map(function(e){return e[1];}),backgroundColor:s.map(function(e){return gc(e[0],.75);}),borderColor:s.map(function(e){return gc(e[0]);}),borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return ' '+fmt(c.raw);}}})},scales:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:TK}}}});
 }
 function setTxFilter(f,btn){txFilter=f;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTx();}
-function renderTx(){popularCats();
-  var busca=(document.getElementById('fBusca')||{}).value||'';
-  var cf=(document.getElementById('fFiltCat')||{}).value||'';
+function renderTx(){
   var tx=filtered.slice();
   if(txFilter==='Receita'||txFilter==='Despesa')tx=tx.filter(function(d){return d.tipo===txFilter;});
-  if(busca)tx=tx.filter(function(d){return(d.desc||'').toLowerCase().includes(busca.toLowerCase())||(d.cat||'').toLowerCase().includes(busca.toLowerCase());});
-  if(cf)tx=tx.filter(function(d){return d.cat===cf;});
-  tx.sort(function(a,b){var v=0;if(sortCol==='data'){var da=parseDt(a.data),db=parseDt(b.data);v=da&&db?da-db:0;}else if(sortCol==='mes'){v=(a.mesKey||'').localeCompare(b.mesKey||'');}else if(sortCol==='valor'){v=a.valor-b.valor;}return v*sortDir;});
+  tx.sort(function(a,b){var da=parseDt(a.data),db=parseDt(b.data);return db&&da?db-da:0;});
   document.getElementById('txCount').textContent=tx.length+' registros';
   var el=document.getElementById('txBody');
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
@@ -554,9 +548,7 @@ function renderTx(){popularCats();
   }).join('');
 }
 /* ═══ MODAL ═══ */
-var lastClickIdx=-1,lastClickTime=0,sortCol="data",sortDir=-1;
-function sortTx(c){sortDir=sortCol===c?sortDir*-1:-1;sortCol=c;["mes","data","valor"].forEach(function(k){var e=document.getElementById({mes:"sMs",data:"sDt",valor:"sVl"}[k]);if(e)e.textContent=k===sortCol?(sortDir===1?" ↑":" ↓"):" ↕";});renderTx();}
-function popularCats(){var s=document.getElementById("fFiltCat");if(!s)return;var cv=s.value;var cats=[...new Set(filtered.map(function(d){return d.cat;}))].filter(Boolean).sort();s.innerHTML="<option value=\"\"\>Todas categorias</option>";cats.forEach(function(c){s.innerHTML+="<option value=\""+c+"\">"+c+"</option>";});s.value=cv;}
+var lastClickIdx=-1,lastClickTime=0;
 function handleTxClick(e,ri){
   var now=Date.now();
   if(lastClickIdx===ri&&now-lastClickTime<500){openModalByRi(ri);lastClickIdx=-1;return;}
@@ -642,7 +634,7 @@ async function saveEdit(){
   if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','⚠️ Preencha Data, Mês/Ano, Descrição e Valor.');return;}
   var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='💾 Salvando...';
   var dtParts=dataVal.split('-');var dataFmt=dtParts[2]+'/'+dtParts[1]+'/'+dtParts[0];
-  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(valorRaw),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
+  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,"").replace(",",".")),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
@@ -681,6 +673,18 @@ async function submitForm(){
   btn.disabled=false;btn.textContent='💾 Salvar no Google Sheets';
 }
 function showFormMsg(type,html){var el=document.getElementById('formMsg');el.className='form-msg '+type;el.innerHTML=html;el.style.display='block';if(type==='ok')setTimeout(function(){el.style.display='none';},8000);}
+document.addEventListener('DOMContentLoaded',function(){
+['fValor','eValor'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.addEventListener('input',function(){
+    var v=this.value.replace(/[^0-9]/g,'');
+    if(!v){this.value='';return;}
+    var n=parseInt(v)/100;
+    this.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  });
+});
+});
 function init(){loadFallback();buildPills();populateForm();applyPF();}
 init();
 </script>

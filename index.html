@@ -642,7 +642,7 @@ async function saveEdit(){
   if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','⚠️ Preencha Data, Mês/Ano, Descrição e Valor.');return;}
   var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='💾 Salvando...';
   var dtParts=dataVal.split('-');var dataFmt=dtParts[2]+'/'+dtParts[1]+'/'+dtParts[0];
-  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,"").replace(",",".")),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
+  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,'').replace(',','.')),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;

@@ -439,7 +439,7 @@ function procCSV(rows){
     var sub=r['Subcategoria']||'';
     var cartao=r['Cartão / Banco']||r['Cartao / Banco']||'';
     var tags=r['Tags']||'';
-    var mesRaw=r['Mês de Referência']||r['Mes de Referencia']||Object.values(r)[11]||'';var mes=mesRaw;if(mesRaw instanceof Date||(!isNaN(Date.parse(mesRaw))&&mesRaw.toString().length>6)){var dm=new Date(mesRaw);var mn=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];mes=mn[dm.getMonth()]+'/'+(dm.getFullYear().toString().slice(2));}else if(mesRaw&&mesRaw.includes('/')){var mp=mesRaw.split('/');if(mp[1]&&mp[1].length===4)mes=mp[0]+'/'+mp[1].slice(2);};
+    var mesRaw=r['Mês de Referência']||r['Mes de Referencia']||Object.values(r)[11]||'';var mes=mesRaw;if(mesRaw&&typeof mesRaw==='string'&&mesRaw.includes('/')){var mp=mesRaw.trim().split('/');if(mp.length===2&&mp[1].length===4){mes=mp[0].toLowerCase()+'/'+mp[1].slice(2);}else if(mp.length===3){var meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];var mIdx=parseInt(mp[1])-1;mes=meses[mIdx]+'/'+(mp[2].length===4?mp[2].slice(2):mp[2]);}}else if(mesRaw&&mesRaw.toString().match(/^d{4}-d{2}/)){var dp=mesRaw.toString().split('-');var meses=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];mes=meses[parseInt(dp[1])-1]+'/'+dp[0].slice(2);}
     var credito=r['Crédito?']||r['Credito?']||'Não';
     var df=dataRaw;
     if(dataRaw&&dataRaw.indexOf('/')===-1){var d=new Date(dataRaw);if(!isNaN(d))df=d.toLocaleDateString('pt-BR');}

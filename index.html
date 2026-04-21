@@ -667,7 +667,7 @@ async function submitForm(){
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     var extra=rec==='Parcelada'?' ('+payload.numParcelas+' parcelas)':rec==='Fixa'?' (12 meses)':'';
-    showFormMsg('ok','✅ Salvo'+extra+'! Clique em 🔄 Sincronizar para ver.');
+    doSync();showFormMsg('ok','✅ Salvo'+extra+'! Clique em 🔄 Sincronizar para ver.');
     document.getElementById('fDesc').value='';document.getElementById('fValor').value='';document.getElementById('fParcelas').value='';
   }catch(e){showFormMsg('err','❌ Erro: '+e.message);}
   btn.disabled=false;btn.textContent='💾 Salvar no Google Sheets';

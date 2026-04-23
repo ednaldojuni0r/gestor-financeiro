@@ -233,6 +233,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
         <button class="tab-btn active" onclick="showView('dashboard',this)">📊 Dashboard</button>
         <button class="tab-btn" onclick="showView('evolution',this)">📈 Evolução</button>
         <button class="tab-btn" onclick="showView('transactions',this)">📋 Lançamentos</button>
+        <button class="tab-btn" onclick="showView('subcats',this)">🔎 Subcats</button>
         <button class="tab-btn" onclick="showView('novo',this)">➕ Novo</button>
       </div>
       <button class="sync-btn" id="syncBtn" onclick="doSync()">🔄 Sincronizar</button>
@@ -307,9 +308,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <button class="filter-btn active" onclick="setTxFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setTxFilter('Receita',this)">Receitas</button>
       <button class="filter-btn" onclick="setTxFilter('Despesa',this)">Despesas</button>
-    </div>
+setTxFilter('Despesa',this)">Despesas</button>
+      <input id="fBusca" type="text" placeholder="🔍 Buscar..." oninput="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;min-width:180px;">
+      <select id="fFiltCat" onchange="renderTx()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--mt);font-size:12px;padding:5px 13px;border-radius:8px;outline:none;"><option value="">Todas categorias</option></select>
+    </div>iv>
     <div class="tx-table">
-      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span>Mês Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
+      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span style="cursor:pointer" onclick="sortTx('mes')">Mês Ref.<span id="sMs"> ↕</span></span><span style="cursor:pointer" onclick="sortTx('data')">Data<span id="sDt"> ↕</span></span><span style="cursor:pointer;text-align:right" onclick="sortTx('valor')">Valor<span id="sVl"> ↕</span></span><span>Tipo</span></div>
       <div id="txBody"></div>
     </div>
   </div>
@@ -477,7 +481,7 @@ function mkPill(l,fn){var b=document.createElement('button');b.className='period
 function selPill(key,btn){document.querySelectorAll('.period-pill').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');activeMonths=key==='all'?new Set():new Set([key]);applyPF();}
 function applyCustomRange(){var s=document.getElementById('rangeStart').value,e=document.getElementById('rangeEnd').value;if(!s||!e)return;var keys=[];allData.forEach(function(d){if(d.mesKey&&keys.indexOf(d.mesKey)===-1)keys.push(d.mesKey);});keys.sort();activeMonths=new Set(keys.filter(function(k){return k>=s&&k<=e;}));document.querySelectorAll('.period-pill').forEach(function(b){b.classList.remove('active');});applyPF();}
 function applyPF(){filtered=activeMonths.size===0?allData.slice():allData.filter(function(d){return activeMonths.has(d.mesKey);});renderAll();}
-function showView(id,btn){document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.getElementById('view-'+id).classList.add('active');btn.classList.add('active');if(id==='evolution')renderEvol();}
+function showView(id,btn){document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.getElementById('view-'+id).classList.add('active');btn.classList.add('active');window.scrollTo(0,0);if(id==='evolution')renderEvol();if(id==='subcats')renderSubcats();}
 function renderAll(){renderSum();renderIns();renderDonut();renderCatList();renderTx();if(document.getElementById('view-evolution').classList.contains('active'))renderEvol();}
 function renderSum(){
   var inc=filtered.filter(function(d){return d.tipo==='Receita';}),exp=filtered.filter(function(d){return d.tipo==='Despesa';});
@@ -535,20 +539,37 @@ function renderHBar(){
   charts['hbar']=new Chart(document.getElementById('hbarChart').getContext('2d'),{type:'bar',data:{labels:s.map(function(e){return e[0];}),datasets:[{label:'Despesas',data:s.map(function(e){return e[1];}),backgroundColor:s.map(function(e){return gc(e[0],.75);}),borderColor:s.map(function(e){return gc(e[0]);}),borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return ' '+fmt(c.raw);}}})},scales:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:TK}}}});
 }
 function setTxFilter(f,btn){txFilter=f;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTx();}
-function renderTx(){
+function renderTx(){popularCats();
+  var busca=(document.getElementById("fBusca")||{}).value||"";
+  var cf=(document.getElementById("fFiltCat")||{}).value||"";
   var tx=filtered.slice();
-  if(txFilter==='Receita'||txFilter==='Despesa')tx=tx.filter(function(d){return d.tipo===txFilter;});
-  tx.sort(function(a,b){var da=parseDt(a.data),db=parseDt(b.data);return db&&da?db-da:0;});
+  if(txFilter==="Receita"||txFilter==="Despesa")tx=tx.filter(function(d){return d.tipo===txFilter;});
+  if(busca)tx=tx.filter(function(d){return(d.desc||"").toLowerCase().includes(busca.toLowerCase())||(d.cat||"").toLowerCase().includes(busca.toLowerCase());});
+  if(cf)tx=tx.filter(function(d){return d.cat===cf;});
+  tx.sort(function(a,b){var v=0;if(sortCol==="data"){var da=parseDt(a.data),db=parseDt(b.data);v=da&&db?da-db:0;}else if(sortCol==="mes"){v=(a.mesKey||"").localeCompare(b.mesKey||"");}else if(sortCol==="valor"){v=a.valor-b.valor;}return v*sortDir;});
   document.getElementById('txCount').textContent=tx.length+' registros';
   var el=document.getElementById('txBody');
   if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lançamento encontrado.</div>';return;}
   el.innerHTML=tx.map(function(d,i){
     var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'−',ml=d.mesKey?mkLabel(d.mesKey):'—',idx=ri=d.rowIndex||0;
-    return '<div class="tx-row" data-ri="'+ri+'" ondblclick="openModalByRi('+ri+')" onclick="handleTxClick(event,'+ri+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
+    return '<div class="tx-row" data-ri="'+ri+'" ondblclick="openModalByRi('+ri+')" onclick="handleTxClick(event,'+ri+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span>
+  <div class="view" id="view-subcats">
+    <div class="chart-card" style="margin-bottom:16px;">
+      <div class="chart-title" style="flex-wrap:wrap;gap:10px;"><span>Análise por Subcategoria</span><div style="display:flex;gap:8px;flex-wrap:wrap;"><select id="scFiltCat" onchange="renderSubcats()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);font-size:12px;padding:5px 10px;border-radius:8px;outline:none;"><option value="">Todas categorias</option></select><select id="scFiltTipo" onchange="renderSubcats()" style="background:var(--sf2);border:1px solid var(--bd);color:var(--tx);font-size:12px;padding:5px 10px;border-radius:8px;outline:none;"><option value="">Rec + Desp</option><option value="Receita">Receitas</option><option value="Despesa">Despesas</option></select></div></div>
+      <div style="position:relative;height:350px;"><canvas id="subcatBarChart"></canvas></div>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="chart-title">Top 10 Subcategorias</div><div style="position:relative;height:280px;"><canvas id="subcatDonut"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title" id="subcatListTitle">Ranking</div><div id="subcatList" style="max-height:280px;overflow-y:auto;margin-top:4px;"></div></div>
+    </div>
+  </div>
+</div>';
   }).join('');
 }
 /* ═══ MODAL ═══ */
-var lastClickIdx=-1,lastClickTime=0;
+var lastClickIdx=-1,lastClickTime=0,sortCol="data",sortDir=-1;
+function sortTx(c){sortDir=sortCol===c?sortDir*-1:-1;sortCol=c;["mes","data","valor"].forEach(function(k){var e=document.getElementById({mes:"sMs",data:"sDt",valor:"sVl"}[k]);if(e)e.textContent=k===sortCol?(sortDir===1?" ↑":" ↓"):" ↕";});renderTx();}
+function popularCats(){var s=document.getElementById("fFiltCat");if(!s)return;var cv=s.value;var cats=[...new Set(filtered.map(function(d){return d.cat;}))].filter(Boolean).sort();s.innerHTML="<option value=\"\">Todas categorias</option>";cats.forEach(function(c){s.innerHTML+="<option value=\""+c+"\">"+c+"</option>";});s.value=cv;}
 function handleTxClick(e,ri){
   var now=Date.now();
   if(lastClickIdx===ri&&now-lastClickTime<500){openModalByRi(ri);lastClickIdx=-1;return;}
@@ -662,7 +683,7 @@ async function submitForm(){
   var desc=document.getElementById('fDesc').value.trim(),valorRaw=document.getElementById('fValor').value,dataVal=document.getElementById('fData').value,mesRef=document.getElementById('fMesRef').value,anoRef=document.getElementById('fAnoRef').value,rec=document.getElementById('fRec').value,nParcEl=document.getElementById('fParcelas');
   if(!desc||!valorRaw||!dataVal||!mesRef){showFormMsg('warn','⚠️ Preencha: Tipo, Data, Mês/Ano, Descrição e Valor.');return;}
   if(rec==='Parcelada'&&(!nParcEl.value||parseInt(nParcEl.value)<2)){showFormMsg('warn','⚠️ Informe o número de parcelas (mínimo 2).');return;}
-  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(valorRaw),cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'Única':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
+  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,'').replace(',','.')),cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'Única':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
   var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=rec==='Parcelada'?'💾 Salvando '+payload.numParcelas+' parcelas...':rec==='Fixa'?'💾 Salvando 12 meses...':'💾 Salvando...';
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
@@ -678,14 +699,18 @@ document.addEventListener('DOMContentLoaded',function(){
   var el=document.getElementById(id);
   if(!el)return;
   el.addEventListener('input',function(){
-    var v=this.value.replace(/[^0-9]/g,'');
-    if(!v){this.value='';return;}
-    var n=parseInt(v)/100;
-    this.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    var raw=this.value.replace(/[^0-9,]/g,'');
+    var pts=raw.split(',');
+    var intStr=pts[0].replace(/\./g,'').replace(/^0+/,'');
+    var formatted=intStr===''?'':Number(intStr).toLocaleString('pt-BR');
+    if(pts.length>1)formatted+=','+(pts[1]||'').substring(0,2);
+    this.value=formatted;
   });
 });
 });
-function init(){loadFallback();buildPills();populateForm();applyPF();}
+function popularScCats(){var s=document.getElementById("scFiltCat");if(!s)return;var cv=s.value;var tipo=(document.getElementById("scFiltTipo")||{}).value||"";var data=tipo?filtered.filter(function(d){return d.tipo===tipo;}):filtered;var cats=[...new Set(data.map(function(d){return d.cat;}))].filter(Boolean).sort();s.innerHTML="<option value=\"\">Todas categorias</option>";cats.forEach(function(c){s.innerHTML+="<option value=\""+c+"\">"+c+"</option>";});s.value=cv;}
+function renderSubcats(){popularScCats();var cat=(document.getElementById("scFiltCat")||{}).value||"";var tipo=(document.getElementById("scFiltTipo")||{}).value||"";var data=filtered.slice();if(tipo)data=data.filter(function(d){return d.tipo===tipo;});if(cat)data=data.filter(function(d){return d.cat===cat;});var sc={};data.forEach(function(d){var k=d.subcat||"Sem subcat";if(!sc[k])sc[k]={val:0,cat:d.cat||"",subcat:k,count:0};sc[k].val+=d.valor;sc[k].count++;});var sorted=Object.entries(sc).sort(function(a,b){return b[1].val-a[1].val;});var top15=sorted.slice(0,15);dC("subcatBarChart");if(top15.length){charts["subcatBarChart"]=new Chart(document.getElementById("subcatBarChart").getContext("2d"),{type:"bar",data:{labels:top15.map(function(e){return e[0].length>28?e[0].substring(0,26)+"…":e[0];}),datasets:[{label:"Valor",data:top15.map(function(e){return e[1].val;}),backgroundColor:top15.map(function(e){return gc(e[1].cat,.8);}),borderColor:top15.map(function(e){return gc(e[1].cat);}),borderWidth:1,borderRadius:4}]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return " "+fmt(c.raw)+" ("+top15[c.dataIndex][1].count+" lanç.)";}}})},sections:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:Object.assign({},TK,{font:{size:10}})}},scales:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:Object.assign({},TK,{font:{size:10}})}}}})}var top10=sorted.slice(0,10);dC("subcatDonut");if(top10.length){charts["subcatDonut"]=new Chart(document.getElementById("subcatDonut").getContext("2d"),{type:"doughnut",data:{labels:top10.map(function(e){return e[0].length>20?e[0].substring(0,18)+"…":e[0];}),datasets:[{data:top10.map(function(e){return e[1].val;}),backgroundColor:top10.map(function(e){return gc(e[1].cat);}),borderColor:"#111520",borderWidth:3,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"60%",plugins:{legend:{position:"bottom",labels:{color:"#6b7280",font:{family:"DM Sans",size:10},padding:8,boxWidth:8,boxHeight:8}},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return " "+fmt(c.raw);}}})}}})}var total=data.reduce(function(s,d){return s+d.valor;},0);document.getElementById("subcatListTitle").textContent="Ranking ("+sorted.length+" subcategorias)";document.getElementById("subcatList").innerHTML=sorted.map(function(e,i){var info=e[1],pct=total>0?(info.val/total*100).toFixed(1):0,color=gc(info.cat);return "<div class=\"cat-item\"><div style=\"flex:1\"><div style=\"display:flex;align-items:center;gap:6px;\"><span style=\"font-size:10px;color:var(--mt);min-width:18px;\">"+(i+1)+".</span><div class=\"cat-dot\" style=\"background:"+color+"\"></div><div><span style=\"font-size:12px;\">"+info.subcat+"</span><span style=\"font-size:10px;color:var(--mt);display:block;\">"+info.cat+"</span></div></div><div class=\"cat-bar-wrap\"><div class=\"cat-bar-fill\" style=\"width:"+pct+"%;background:"+color+"\"></div></div></div><div style=\"text-align:right;margin-left:10px;flex-shrink:0\"><span style=\"font-family:Syne,sans-serif;font-size:12px;font-weight:600;\">"+fmt(info.val)+"</span><span style=\"font-size:10px;color:var(--mt);display:block;\">"+pct+"%</span><span style=\"font-size:10px;color:var(--mt);\">"+info.count+" lanç.</span></div></div>";}).join("");}
+function init(){loadFallback();buildPills();populateForm();applyPF();doSync();}
 init();
 </script>
 </body>

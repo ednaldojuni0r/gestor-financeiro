@@ -82,6 +82,12 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 .filter-row{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;}
 .filter-btn{background:var(--sf2);border:1px solid var(--bd);color:var(--mt);font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 13px;border-radius:8px;cursor:pointer;transition:all .15s;}
 .filter-btn.active{background:var(--ac);border-color:var(--ac);color:#000;font-weight:600;}
+.tx-search-wrap{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.tx-search-input{background:var(--sf2);border:1px solid var(--bd);color:var(--ft);font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 12px;border-radius:8px;outline:none;min-width:180px;flex:1;transition:border .15s;}
+.tx-search-input:focus{border-color:var(--ac);}
+.tx-search-input::placeholder{color:var(--mt);}
+.tx-sel{background:var(--sf2);border:1px solid var(--bd);color:var(--ft);font-family:'DM Sans',sans-serif;font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer;outline:none;transition:border .15s;}
+.tx-sel:focus{border-color:var(--ac);}
 .tx-table{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;}
 .tx-head{display:grid;grid-template-columns:1fr 120px 80px 90px 90px 70px;padding:11px 20px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--mt);gap:10px;}
 .tx-row{display:grid;grid-template-columns:1fr 120px 80px 90px 90px 70px;padding:12px 20px;border-bottom:1px solid var(--bd);font-size:13px;align-items:center;gap:10px;transition:background .15s;cursor:pointer;}
@@ -303,6 +309,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
         <div class="badge" id="txCount">—</div>
       </div>
     </div>
+    <div class="tx-search-wrap">
+      <input type="text" class="tx-search-input" id="txSearchInput" placeholder="🔍 Buscar por descrição..." oninput="setTxSearch(this.value)">
+      <select class="tx-sel" id="txCatFilter" onchange="setTxCat(this.value)">
+        <option value="">Todas as categorias</option>
+      </select>
+      <select class="tx-sel" id="txMesFilter" onchange="setTxMes(this.value)">
+        <option value="">Todos os meses</option>
+      </select>
+    </div>
     <div class="filter-row">
       <button class="filter-btn active" onclick="setTxFilter('todos',this)">Todos</button>
       <button class="filter-btn" onclick="setTxFilter('Receita',this)">Receitas</button>
@@ -390,7 +405,7 @@ var MM={'janeiro':'01','fevereiro':'02','março':'03','marco':'03','abril':'04',
 var MN=['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 var CC={'Lazer':'#4f8eff','Alimentação':'#00e5b0','Alimentacao':'#00e5b0','Contas':'#ff4f6d','Vestiário':'#a78bfa','Vestuario':'#a78bfa','Pessoais':'#ffb547','Saúde':'#34d399','Saude':'#34d399','Diversas':'#f472b6','Presentes':'#fb923c','Transporte':'#38bdf8','Assinaturas':'#e879f9','Casa':'#84cc16','Educação':'#fbbf24','Educacao':'#fbbf24','Outros':'#94a3b8','Investimentos':'#06b6d4'};
 var allData=[],filtered=[],configData={bancos:[],categorias:{Receita:{},Despesa:{}}};
-var activeMonths=new Set(),txFilter='todos',barMode='mensal',formTipo='Receita',modalTipo='Receita';
+var activeMonths=new Set(),txFilter='todos',txSearch='',txCat='',txMes='',barMode='mensal',formTipo='Receita',modalTipo='Receita';
 var charts={},editingIdx=null;
 function fmt(v){return 'R$ '+Math.abs(v).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
 function fmtS(v){return v>=1000?'R$'+(v/1000).toFixed(1)+'k':'R$'+v.toFixed(0);}
@@ -535,9 +550,24 @@ function renderHBar(){
   charts['hbar']=new Chart(document.getElementById('hbarChart').getContext('2d'),{type:'bar',data:{labels:s.map(function(e){return e[0];}),datasets:[{label:'Despesas',data:s.map(function(e){return e[1];}),backgroundColor:s.map(function(e){return gc(e[0],.75);}),borderColor:s.map(function(e){return gc(e[0]);}),borderWidth:1,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},TT,{callbacks:{label:function(c){return ' '+fmt(c.raw);}}})},scales:{x:{grid:GR,ticks:Object.assign({},TK,{callback:function(v){return fmtS(v);}})},y:{grid:GR,ticks:TK}}}});
 }
 function setTxFilter(f,btn){txFilter=f;document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');renderTx();}
+function setTxSearch(v){txSearch=v.toLowerCase().trim();renderTx();}
+function setTxCat(v){txCat=v;renderTx();}
+function setTxMes(v){txMes=v;renderTx();}
+function populateTxFilters(){
+  var cats=new Set(),meses=new Map();
+  filtered.forEach(function(d){if(d.categoria)cats.add(d.categoria);if(d.mesKey)meses.set(d.mesKey,mkLabel(d.mesKey));});
+  var catSel=document.getElementById('txCatFilter');
+  if(catSel){var cv=catSel.value;catSel.innerHTML='<option value="">Todas as categorias</option>';Array.from(cats).sort().forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;catSel.appendChild(o);});catSel.value=cv&&cats.has(cv)?cv:'';}
+  var mesSel=document.getElementById('txMesFilter');
+  if(mesSel){var mv=mesSel.value;mesSel.innerHTML='<option value="">Todos os meses</option>';Array.from(meses.keys()).sort().reverse().forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=meses.get(k);mesSel.appendChild(o);});mesSel.value=mv&&meses.has(mv)?mv:'';}
+}
 function renderTx(){
+  populateTxFilters();
   var tx=filtered.slice();
   if(txFilter==='Receita'||txFilter==='Despesa')tx=tx.filter(function(d){return d.tipo===txFilter;});
+  if(txSearch)tx=tx.filter(function(d){return (d.descricao||'').toLowerCase().includes(txSearch)||(d.categoria||'').toLowerCase().includes(txSearch);});
+  if(txCat)tx=tx.filter(function(d){return d.categoria===txCat;});
+  if(txMes)tx=tx.filter(function(d){return d.mesKey===txMes;});
   tx.sort(function(a,b){var da=parseDt(a.data),db=parseDt(b.data);return db&&da?db-da:0;});
   document.getElementById('txCount').textContent=tx.length+' registros';
   var el=document.getElementById('txBody');

@@ -126,7 +126,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 .form-msg.ok{background:rgba(0,229,176,.1);border:1px solid var(--ac);color:var(--ac);}
 .form-msg.warn{background:rgba(255,181,71,.08);border:1px solid var(--wn);color:var(--wn);}
 .form-msg.err{background:rgba(255,79,109,.08);border:1px solid var(--dg);color:var(--dg);}
-/* MODAL â position:fixed funciona no GitHub Pages */
+/* MODAL Ã¢ÂÂ position:fixed funciona no GitHub Pages */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,13,20,.88);z-index:9999;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.show{display:flex;}
 .modal{background:var(--sf);border:1px solid var(--bd);border-radius:18px;padding:28px;width:100%;max-width:660px;max-height:90vh;overflow-y:auto;animation:modalIn .2s ease;}
@@ -158,25 +158,25 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 </head>
 <body>
 
-<!-- MODAL DE EDIÃÃO / EXCLUSÃO -->
+<!-- MODAL DE EDIÃÂÃÂO / EXCLUSÃÂO -->
 <div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event)">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="modalTitle">âï¸ Editar LanÃ§amento</div>
-      <button class="modal-close" onclick="closeModal()">â</button>
+      <div class="modal-title" id="modalTitle">Ã¢ÂÂÃ¯Â¸Â Editar LanÃÂ§amento</div>
+      <button class="modal-close" onclick="closeModal()">Ã¢ÂÂ</button>
     </div>
 
     <div style="font-family:Syne,sans-serif;font-size:11px;font-weight:600;color:var(--mt);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd);">Tipo</div>
     <div class="radio-group" style="margin-bottom:16px;">
-      <button class="radio-btn sel-r" id="eTipoR" onclick="setModalTipo('Receita')">ð Receita</button>
-      <button class="radio-btn" id="eTipoD" onclick="setModalTipo('Despesa')">ð Despesa</button>
+      <button class="radio-btn sel-r" id="eTipoR" onclick="setModalTipo('Receita')">Ã°ÂÂÂ Receita</button>
+      <button class="radio-btn" id="eTipoD" onclick="setModalTipo('Despesa')">Ã°ÂÂÂ Despesa</button>
     </div>
 
     <div class="form-grid" style="margin-bottom:14px;">
       <div class="fg"><div class="flabel">Data</div><input type="date" class="finput" id="eData"></div>
-      <div class="fg"><div class="flabel">MÃªs de ReferÃªncia</div>
+      <div class="fg"><div class="flabel">MÃÂªs de ReferÃÂªncia</div>
         <select class="fselect" id="eMesRef">
-          <option>Janeiro</option><option>Fevereiro</option><option>MarÃ§o</option><option>Abril</option>
+          <option>Janeiro</option><option>Fevereiro</option><option>MarÃÂ§o</option><option>Abril</option>
           <option>Maio</option><option>Junho</option><option>Julho</option><option>Agosto</option>
           <option>Setembro</option><option>Outubro</option><option>Novembro</option><option>Dezembro</option>
         </select>
@@ -189,9 +189,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
     </div>
 
     <div class="form-grid" style="margin-bottom:14px;">
-      <div class="fg s2"><div class="flabel">DescriÃ§Ã£o</div><input type="text" class="finput" id="eDesc"></div>
+      <div class="fg s2"><div class="flabel">DescriÃÂ§ÃÂ£o</div><input type="text" class="finput" id="eDesc"></div>
       <div class="fg"><div class="flabel">Valor (R$)</div><input type="text" class="finput" id="eValor" inputmode="decimal"></div>
-      <div class="fg"><div class="flabel">CartÃ£o / Banco</div><select class="fselect" id="eCartao"></select></div>
+      <div class="fg"><div class="flabel">CartÃÂ£o / Banco</div><select class="fselect" id="eCartao"></select></div>
       <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="eCat" onchange="onModalCatChange()"></select></div>
       <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="eSubcat"></select></div>
       <div class="fg"><div class="flabel">Tag</div>
@@ -203,16 +203,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
     </div>
 
     <div class="fg" style="margin-bottom:4px;">
-      <div class="flabel">Ã no crÃ©dito?</div>
+      <div class="flabel">ÃÂ no crÃÂ©dito?</div>
       <select class="fselect" id="eCredito">
-        <option value="NÃ£o">NÃ£o (DÃ©bito / Dinheiro)</option>
-        <option value="Sim">Sim (CartÃ£o de CrÃ©dito)</option>
+        <option value="NÃÂ£o">NÃÂ£o (DÃÂ©bito / Dinheiro)</option>
+        <option value="Sim">Sim (CartÃÂ£o de CrÃÂ©dito)</option>
       </select>
     </div>
 
-    <!-- ConfirmaÃ§Ã£o de exclusÃ£o -->
+    <!-- ConfirmaÃÂ§ÃÂ£o de exclusÃÂ£o -->
     <div class="del-confirm" id="delConfirm">
-      <p>â ï¸ Tem certeza que deseja <strong>excluir permanentemente</strong> este lanÃ§amento da planilha? Esta aÃ§Ã£o nÃ£o pode ser desfeita.</p>
+      <p>Ã¢ÂÂ Ã¯Â¸Â Tem certeza que deseja <strong>excluir permanentemente</strong> este lanÃÂ§amento da planilha? Esta aÃÂ§ÃÂ£o nÃÂ£o pode ser desfeita.</p>
       <div class="del-confirm-btns">
         <button class="del-yes" onclick="confirmDelete()">Sim, excluir</button>
         <button class="del-no" onclick="cancelDelete()">Cancelar</button>
@@ -221,8 +221,8 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 
     <div class="modal-footer">
       <button class="mbtn cancel" onclick="closeModal()">Cancelar</button>
-      <button class="mbtn del" id="eDelBtn" onclick="showDeleteConfirm()">ðï¸ Excluir</button>
-      <button class="mbtn save" id="eSaveBtn" onclick="saveEdit()">ð¾ Salvar</button>
+      <button class="mbtn del" id="eDelBtn" onclick="showDeleteConfirm()">Ã°ÂÂÂÃ¯Â¸Â Excluir</button>
+      <button class="mbtn save" id="eSaveBtn" onclick="saveEdit()">Ã°ÂÂÂ¾ Salvar</button>
     </div>
     <div class="modal-msg" id="modalMsg"></div>
   </div>
@@ -231,17 +231,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 <div class="app">
   <nav>
     <div class="logo">
-      <div class="logo-icon">ð</div>
+      <div class="logo-icon">Ã°ÂÂÂ</div>
       <div class="logo-text">Gestor<span>Pro</span></div>
     </div>
     <div class="nav-right">
       <div class="tab-bar">
-        <button class="tab-btn active" onclick="showView('dashboard',this)">ð Dashboard</button>
-        <button class="tab-btn" onclick="showView('evolution',this)">ð EvoluÃ§Ã£o</button>
-        <button class="tab-btn" onclick="showView('transactions',this)">ð LanÃ§amentos</button>
-        <button class="tab-btn" onclick="showView('novo',this)">â Novo</button>
+        <button class="tab-btn active" onclick="showView('dashboard',this)">Ã°ÂÂÂ Dashboard</button>
+        <button class="tab-btn" onclick="showView('evolution',this)">Ã°ÂÂÂ EvoluÃÂ§ÃÂ£o</button>
+        <button class="tab-btn" onclick="showView('transactions',this)">Ã°ÂÂÂ LanÃÂ§amentos</button>
+        <button class="tab-btn" onclick="showView('novo',this)">Ã¢ÂÂ Novo</button>
       </div>
-      <button class="sync-btn" id="syncBtn" onclick="doSync()">ð Sincronizar</button>
+      <button class="sync-btn" id="syncBtn" onclick="doSync()">Ã°ÂÂÂ Sincronizar</button>
       <div class="user-badge"><div class="avatar">ED</div><span class="user-name">Ed</span></div>
     </div>
   </nav>
@@ -254,11 +254,11 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
   <div class="banner hidden" id="banner"></div>
 
   <div class="period-bar">
-    <span class="period-label">PerÃ­odo</span>
+    <span class="period-label">PerÃÂ­odo</span>
     <div class="period-pills" id="monthPills"></div>
     <div class="range-wrap">
       <input type="month" class="date-input" id="rangeStart">
-      <span style="color:var(--mt);font-size:11px;">â</span>
+      <span style="color:var(--mt);font-size:11px;">Ã¢ÂÂ</span>
       <input type="month" class="date-input" id="rangeEnd">
       <button class="apply-btn" onclick="applyCustomRange()">Aplicar</button>
     </div>
@@ -267,15 +267,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
   <!-- DASHBOARD -->
   <div class="view active" id="view-dashboard">
     <div class="summary-grid">
-      <div class="card income"><div class="card-icon">ð</div><div class="card-label">Total Receitas</div><div class="card-value" id="d-income">â</div><div class="card-sub" id="d-income-ct">â</div></div>
-      <div class="card expense"><div class="card-icon">ð</div><div class="card-label">Total Despesas</div><div class="card-value" id="d-expense">â</div><div class="card-sub" id="d-expense-ct">â</div></div>
-      <div class="card balance"><div class="card-icon">âï¸</div><div class="card-label">Saldo</div><div class="card-value" id="d-balance">â</div><div class="card-sub" id="d-balance-sub">â</div></div>
+      <div class="card income"><div class="card-icon">Ã°ÂÂÂ</div><div class="card-label">Total Receitas</div><div class="card-value" id="d-income">Ã¢ÂÂ</div><div class="card-sub" id="d-income-ct">Ã¢ÂÂ</div></div>
+      <div class="card expense"><div class="card-icon">Ã°ÂÂÂ</div><div class="card-label">Total Despesas</div><div class="card-value" id="d-expense">Ã¢ÂÂ</div><div class="card-sub" id="d-expense-ct">Ã¢ÂÂ</div></div>
+      <div class="card balance"><div class="card-icon">Ã¢ÂÂÃ¯Â¸Â</div><div class="card-label">Saldo</div><div class="card-value" id="d-balance">Ã¢ÂÂ</div><div class="card-sub" id="d-balance-sub">Ã¢ÂÂ</div></div>
     </div>
     <div class="insight-strip">
-      <div class="insight"><div class="insight-label">Maior Gasto</div><div class="insight-val" id="i-top">â</div><div class="insight-sub" id="i-top-desc">â</div></div>
-      <div class="insight"><div class="insight-label">Cat. mais cara</div><div class="insight-val" id="i-cat">â</div><div class="insight-sub" id="i-cat-val">â</div></div>
-      <div class="insight"><div class="insight-label">MÃ©dia diÃ¡ria</div><div class="insight-val" id="i-avg">â</div><div class="insight-sub">em despesas</div></div>
-      <div class="insight"><div class="insight-label">Taxa PoupanÃ§a</div><div class="insight-val" id="i-save">â</div><div class="insight-sub">receita â despesa</div></div>
+      <div class="insight"><div class="insight-label">Maior Gasto</div><div class="insight-val" id="i-top">Ã¢ÂÂ</div><div class="insight-sub" id="i-top-desc">Ã¢ÂÂ</div></div>
+      <div class="insight"><div class="insight-label">Cat. mais cara</div><div class="insight-val" id="i-cat">Ã¢ÂÂ</div><div class="insight-sub" id="i-cat-val">Ã¢ÂÂ</div></div>
+      <div class="insight"><div class="insight-label">MÃÂ©dia diÃÂ¡ria</div><div class="insight-val" id="i-avg">Ã¢ÂÂ</div><div class="insight-sub">em despesas</div></div>
+      <div class="insight"><div class="insight-label">Taxa PoupanÃÂ§a</div><div class="insight-val" id="i-save">Ã¢ÂÂ</div><div class="insight-sub">receita Ã¢ÂÂ despesa</div></div>
     </div>
     <div class="charts-grid">
       <div class="chart-card"><div class="chart-title">Gastos por Categoria</div><div class="chart-wrap"><canvas id="donutChart"></canvas></div></div>
@@ -283,10 +283,10 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
     </div>
   </div>
 
-  <!-- EVOLUÃÃO -->
+  <!-- EVOLUÃÂÃÂO -->
   <div class="view" id="view-evolution">
     <div class="chart-card" style="margin-bottom:16px;">
-      <div class="chart-title">Receitas vs Despesas â MÃªs de ReferÃªncia
+      <div class="chart-title">Receitas vs Despesas Ã¢ÂÂ MÃÂªs de ReferÃÂªncia
         <div class="bar-pills">
           <button class="bar-pill active" onclick="setBarMode('mensal',this)">Mensal</button>
           <button class="bar-pill" onclick="setBarMode('trimestral',this)">Trimestral</button>
@@ -300,17 +300,17 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
     </div>
   </div>
 
-  <!-- LANÃAMENTOS -->
+  <!-- LANÃÂAMENTOS -->
   <div class="view" id="view-transactions">
     <div class="section-hdr">
-      <div class="section-title">Todos os LanÃ§amentos</div>
+      <div class="section-title">Todos os LanÃÂ§amentos</div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <span class="tx-hint">ð¡ Clique 2x rÃ¡pido para editar ou excluir</span>
-        <div class="badge" id="txCount">â</div>
+        <span class="tx-hint">Ã°ÂÂÂ¡ Clique 2x rÃÂ¡pido para editar ou excluir</span>
+        <div class="badge" id="txCount">Ã¢ÂÂ</div>
       </div>
     </div>
     <div class="tx-search-wrap">
-      <input type="text" class="tx-search-input" id="txSearchInput" placeholder="ð Buscar por descriÃ§Ã£o..." oninput="setTxSearch(this.value)">
+      <input type="text" class="tx-search-input" id="txSearchInput" placeholder="Ã°ÂÂÂ Buscar por descriÃÂ§ÃÂ£o..." oninput="setTxSearch(this.value)">
       <select class="tx-sel" id="txCatFilter" onchange="setTxCat(this.value)">
         <option value="">Todas as categorias</option>
       </select>
@@ -324,7 +324,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <button class="filter-btn" onclick="setTxFilter('Despesa',this)">Despesas</button>
     </div>
     <div class="tx-table">
-      <div class="tx-head"><span>DescriÃ§Ã£o</span><span>Categoria</span><span>MÃªs Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
+      <div class="tx-head"><span>DescriÃÂ§ÃÂ£o</span><span>Categoria</span><span>MÃÂªs Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
       <div id="txBody"></div>
     </div>
   </div>
@@ -332,20 +332,20 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
   <!-- NOVO -->
   <div class="view" id="view-novo">
     <div class="form-wrap">
-      <div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;">â Novo LanÃ§amento</div>
+      <div style="font-family:Syne,sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;">Ã¢ÂÂ Novo LanÃÂ§amento</div>
       <div class="form-section" style="margin-top:0;">Tipo</div>
       <div class="form-grid">
         <div class="fg s3"><div class="radio-group">
-          <button class="radio-btn sel-r" id="btnR" onclick="setTipo('Receita')">ð Receita</button>
-          <button class="radio-btn" id="btnD" onclick="setTipo('Despesa')">ð Despesa</button>
+          <button class="radio-btn sel-r" id="btnR" onclick="setTipo('Receita')">Ã°ÂÂÂ Receita</button>
+          <button class="radio-btn" id="btnD" onclick="setTipo('Despesa')">Ã°ÂÂÂ Despesa</button>
         </div></div>
       </div>
-      <div class="form-section">Data e ReferÃªncia</div>
+      <div class="form-section">Data e ReferÃÂªncia</div>
       <div class="form-grid">
         <div class="fg"><div class="flabel">Data</div><input type="date" class="finput" id="fData"></div>
-        <div class="fg"><div class="flabel">MÃªs de ReferÃªncia</div>
+        <div class="fg"><div class="flabel">MÃÂªs de ReferÃÂªncia</div>
           <select class="fselect" id="fMesRef">
-            <option>Janeiro</option><option>Fevereiro</option><option>MarÃ§o</option><option>Abril</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>MarÃÂ§o</option><option>Abril</option>
             <option>Maio</option><option>Junho</option><option>Julho</option><option>Agosto</option>
             <option>Setembro</option><option>Outubro</option><option>Novembro</option><option>Dezembro</option>
           </select>
@@ -358,9 +358,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       </div>
       <div class="form-section">Detalhes</div>
       <div class="form-grid">
-        <div class="fg s2"><div class="flabel">DescriÃ§Ã£o</div><input type="text" class="finput" id="fDesc" placeholder="Ex: AlmoÃ§o, Netflix, SalÃ¡rio..."></div>
+        <div class="fg s2"><div class="flabel">DescriÃÂ§ÃÂ£o</div><input type="text" class="finput" id="fDesc" placeholder="Ex: AlmoÃÂ§o, Netflix, SalÃÂ¡rio..."></div>
         <div class="fg"><div class="flabel">Valor Total (R$)</div><input type="text" class="finput" id="fValor" placeholder="0,00" inputmode="decimal"></div>
-        <div class="fg"><div class="flabel">CartÃ£o / Banco</div><select class="fselect" id="fCartao"><option value="">Selecione...</option></select></div>
+        <div class="fg"><div class="flabel">CartÃÂ£o / Banco</div><select class="fselect" id="fCartao"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Categoria</div><select class="fselect" id="fCat" onchange="onCatChange()"><option value="">Selecione...</option></select></div>
         <div class="fg"><div class="flabel">Subcategoria</div><select class="fselect" id="fSubcat"><option value="">Selecione a categoria</option></select></div>
         <div class="fg"><div class="flabel">Tag</div>
@@ -370,28 +370,28 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
           </select>
         </div>
       </div>
-      <div class="form-section" id="recSection" style="display:none;">RecorrÃªncia</div>
+      <div class="form-section" id="recSection" style="display:none;">RecorrÃÂªncia</div>
       <div class="form-grid" id="recGrid" style="display:none;">
         <div class="fg"><div class="flabel">Tipo</div>
           <select class="fselect" id="fRec" onchange="onRecChange()">
-            <option value="Ãnica">LanÃ§amento Ãnico</option>
+            <option value="ÃÂnica">LanÃÂ§amento ÃÂnico</option>
             <option value="Fixa">Despesa Fixa (12 meses)</option>
             <option value="Parcelada">Compra Parcelada</option>
           </select>
         </div>
         <div class="fg" id="fParcelasWrap" style="display:none;">
-          <div class="flabel">NÂº de Parcelas</div>
+          <div class="flabel">NÃÂº de Parcelas</div>
           <input type="number" class="finput" id="fParcelas" placeholder="Ex: 12" min="2" max="60">
         </div>
-        <div class="fg"><div class="flabel">Ã no crÃ©dito?</div>
+        <div class="fg"><div class="flabel">ÃÂ no crÃÂ©dito?</div>
           <select class="fselect" id="fCredito">
-            <option value="NÃ£o">NÃ£o (DÃ©bito / Dinheiro)</option>
-            <option value="Sim">Sim (CartÃ£o de CrÃ©dito)</option>
+            <option value="NÃÂ£o">NÃÂ£o (DÃÂ©bito / Dinheiro)</option>
+            <option value="Sim">Sim (CartÃÂ£o de CrÃÂ©dito)</option>
           </select>
         </div>
       </div>
       <div style="margin-top:24px;">
-        <button class="submit-btn" id="submitBtn" onclick="submitForm()">ð¾ Salvar no Google Sheets</button>
+        <button class="submit-btn" id="submitBtn" onclick="submitForm()">Ã°ÂÂÂ¾ Salvar no Google Sheets</button>
         <div class="form-msg" id="formMsg"></div>
       </div>
     </div>
@@ -401,9 +401,9 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 <script>
 var ASU='https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec';
 var CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2RJ16gdxsqOhaAKRWJVWnB-i8eT1LQ5NppxMNqp5RemWbVAuPtTPE0XtqYH3NT6wUXzTIqM1MKazq/pub?gid=0&single=true&output=csv';
-var MM={'janeiro':'01','fevereiro':'02','marÃ§o':'03','marco':'03','abril':'04','maio':'05','junho':'06','julho':'07','agosto':'08','setembro':'09','outubro':'10','novembro':'11','dezembro':'12'};
-var MN=['','Janeiro','Fevereiro','MarÃ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-var CC={'Lazer':'#4f8eff','AlimentaÃ§Ã£o':'#00e5b0','Alimentacao':'#00e5b0','Contas':'#ff4f6d','VestiÃ¡rio':'#a78bfa','Vestuario':'#a78bfa','Pessoais':'#ffb547','SaÃºde':'#34d399','Saude':'#34d399','Diversas':'#f472b6','Presentes':'#fb923c','Transporte':'#38bdf8','Assinaturas':'#e879f9','Casa':'#84cc16','EducaÃ§Ã£o':'#fbbf24','Educacao':'#fbbf24','Outros':'#94a3b8','Investimentos':'#06b6d4'};
+var MM={'janeiro':'01','fevereiro':'02','marÃÂ§o':'03','marco':'03','abril':'04','maio':'05','junho':'06','julho':'07','agosto':'08','setembro':'09','outubro':'10','novembro':'11','dezembro':'12'};
+var MN=['','Janeiro','Fevereiro','MarÃÂ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var CC={'Lazer':'#4f8eff','AlimentaÃÂ§ÃÂ£o':'#00e5b0','Alimentacao':'#00e5b0','Contas':'#ff4f6d','VestiÃÂ¡rio':'#a78bfa','Vestuario':'#a78bfa','Pessoais':'#ffb547','SaÃÂºde':'#34d399','Saude':'#34d399','Diversas':'#f472b6','Presentes':'#fb923c','Transporte':'#38bdf8','Assinaturas':'#e879f9','Casa':'#84cc16','EducaÃÂ§ÃÂ£o':'#fbbf24','Educacao':'#fbbf24','Outros':'#94a3b8','Investimentos':'#06b6d4'};
 var allData=[],filtered=[],configData={bancos:[],categorias:{Receita:{},Despesa:{}}};
 var activeMonths=new Set(),txFilter='todos',txSearch='',txCat='',txMes='',barMode='mensal',formTipo='Receita',modalTipo='Receita';
 var charts={},editingIdx=null;
@@ -423,39 +423,39 @@ var TT={backgroundColor:'#161b2a',borderColor:'rgba(255,255,255,0.08)',borderWid
 var TK={color:'#6b7280',font:{family:'DM Sans',size:11}};
 var GR={color:'rgba(255,255,255,0.04)'};
 var FB=[
-  {tipo:'Receita',data:'01/01/2026',desc:'Reembolso Thiago',valor:123.20,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃ£o',rowIndex:2},
-  {tipo:'Receita',data:'18/01/2026',desc:'Rendimento automÃ¡tico',valor:62.71,cat:'Investimentos',subcat:'Rendimento AutomÃ¡tico',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃ£o',rowIndex:3},
-  {tipo:'Receita',data:'18/01/2026',desc:'Reembolsos Diversos',valor:189.72,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃ£o',rowIndex:4},
-  {tipo:'Despesa',data:'02/01/2026',desc:'Corte de Cabelo',valor:169.90,cat:'Pessoais',subcat:'Barbeiro',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃ£o',rowIndex:5},
-  {tipo:'Despesa',data:'02/01/2026',desc:'Shein',valor:322.44,cat:'VestiÃ¡rio',subcat:'Roupas',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃ£o',rowIndex:6},
-  {tipo:'Despesa',data:'02/01/2026',desc:'ACM Academia (4/6)',valor:129.88,cat:'Pessoais',subcat:'Academia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃ£o',rowIndex:7},
-  {tipo:'Despesa',data:'02/01/2026',desc:'Aula de InglÃªs',valor:320.00,cat:'EducaÃ§Ã£o',subcat:'Cursos Online',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃ£o',rowIndex:8},
-  {tipo:'Despesa',data:'04/01/2026',desc:'Financiamento',valor:1332.54,cat:'Contas',subcat:'Financiamento',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'NÃ£o',rowIndex:9},
-  {tipo:'Despesa',data:'10/01/2026',desc:'CondomÃ­nio',valor:555.09,cat:'Contas',subcat:'CondomÃ­nio',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'NÃ£o',rowIndex:10},
-  {tipo:'Despesa',data:'16/01/2026',desc:'Terapia',valor:120.00,cat:'SaÃºde',subcat:'Terapia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃ£o',rowIndex:11}
+  {tipo:'Receita',data:'01/01/2026',desc:'Reembolso Thiago',valor:123.20,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃÂ£o',rowIndex:2},
+  {tipo:'Receita',data:'18/01/2026',desc:'Rendimento automÃÂ¡tico',valor:62.71,cat:'Investimentos',subcat:'Rendimento AutomÃÂ¡tico',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃÂ£o',rowIndex:3},
+  {tipo:'Receita',data:'18/01/2026',desc:'Reembolsos Diversos',valor:189.72,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'NÃÂ£o',rowIndex:4},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Corte de Cabelo',valor:169.90,cat:'Pessoais',subcat:'Barbeiro',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃÂ£o',rowIndex:5},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Shein',valor:322.44,cat:'VestiÃÂ¡rio',subcat:'Roupas',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃÂ£o',rowIndex:6},
+  {tipo:'Despesa',data:'02/01/2026',desc:'ACM Academia (4/6)',valor:129.88,cat:'Pessoais',subcat:'Academia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃÂ£o',rowIndex:7},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Aula de InglÃÂªs',valor:320.00,cat:'EducaÃÂ§ÃÂ£o',subcat:'Cursos Online',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃÂ£o',rowIndex:8},
+  {tipo:'Despesa',data:'04/01/2026',desc:'Financiamento',valor:1332.54,cat:'Contas',subcat:'Financiamento',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'NÃÂ£o',rowIndex:9},
+  {tipo:'Despesa',data:'10/01/2026',desc:'CondomÃÂ­nio',valor:555.09,cat:'Contas',subcat:'CondomÃÂ­nio',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'NÃÂ£o',rowIndex:10},
+  {tipo:'Despesa',data:'16/01/2026',desc:'Terapia',valor:120.00,cat:'SaÃÂºde',subcat:'Terapia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'NÃÂ£o',rowIndex:11}
 ];
 function setStatus(c,m){document.getElementById('statusDot').className='dot '+c;document.getElementById('statusText').textContent=m;}
 function showBanner(t,h){var b=document.getElementById('banner');b.className='banner '+t;b.innerHTML=h;}
 function hideBanner(){document.getElementById('banner').className='banner hidden';}
 function loadFallback(){
   allData=FB.map(function(r){return Object.assign({},r,{mesKey:toMK(r.mes)});});
-  configData={bancos:['ItaÃº','Bradesco','Nubank','Inter','C6 Bank','Caixa'],categorias:{Receita:{Investimentos:['Dividendos','Rendimento AutomÃ¡tico'],Outros:['Outras receitas','Reembolsos'],Trabalho:['SalÃ¡rio','Freelance']},Despesa:{AlimentaÃ§Ã£o:['Supermercado','Padaria','RefeiÃ§Ã£o fora de casa (trabalho)'],Lazer:['Restaurantes / bares / festas','Ifood'],Contas:['Financiamento','CondomÃ­nio','Internet','Celular','Conta de Ã¡gua'],VestiÃ¡rio:['Roupas','CalÃ§ados'],SaÃºde:['Medicamentos','Terapia'],Pessoais:['Barbeiro','Academia'],Transporte:['Uber','CombustÃ­vel'],Assinaturas:['Streaming','Seguros'],Presentes:['Presentes diversos'],Diversas:['Outros gastos'],Casa:['MÃ³veis','UtensÃ­lios'],EducaÃ§Ã£o:['Cursos Online','Livros']}}};
-  setStatus('orange','ð Dados locais Jan/26 â clique em Sincronizar');
-  showBanner('warn','ð Exibindo <strong>Janeiro/2026</strong>. Clique em <strong>ð Sincronizar</strong> para dados ao vivo de todos os meses.');
+  configData={bancos:['ItaÃÂº','Bradesco','Nubank','Inter','C6 Bank','Caixa'],categorias:{Receita:{Investimentos:['Dividendos','Rendimento AutomÃÂ¡tico'],Outros:['Outras receitas','Reembolsos'],Trabalho:['SalÃÂ¡rio','Freelance']},Despesa:{AlimentaÃÂ§ÃÂ£o:['Supermercado','Padaria','RefeiÃÂ§ÃÂ£o fora de casa (trabalho)'],Lazer:['Restaurantes / bares / festas','Ifood'],Contas:['Financiamento','CondomÃÂ­nio','Internet','Celular','Conta de ÃÂ¡gua'],VestiÃÂ¡rio:['Roupas','CalÃÂ§ados'],SaÃÂºde:['Medicamentos','Terapia'],Pessoais:['Barbeiro','Academia'],Transporte:['Uber','CombustÃÂ­vel'],Assinaturas:['Streaming','Seguros'],Presentes:['Presentes diversos'],Diversas:['Outros gastos'],Casa:['MÃÂ³veis','UtensÃÂ­lios'],EducaÃÂ§ÃÂ£o:['Cursos Online','Livros']}}};
+  setStatus('orange','Ã°ÂÂÂ Dados locais Jan/26 Ã¢ÂÂ clique em Sincronizar');
+  showBanner('warn','Ã°ÂÂÂ Exibindo <strong>Janeiro/2026</strong>. Clique em <strong>Ã°ÂÂÂ Sincronizar</strong> para dados ao vivo de todos os meses.');
 }
 function procCSV(rows){
   var parsed=[];
   rows.forEach(function(r,i){
     var tipo=r['Tipo']||'';
     var dataRaw=r['Data']||'';
-    var desc=r['DescriÃ§Ã£o']||r['Descricao']||Object.values(r)[2]||'';
+    var desc=r['DescriÃÂ§ÃÂ£o']||r['Descricao']||Object.values(r)[2]||'';
     var valor=parseVal(r['Valor']||'0');
     var cat=r['Categoria']||'';
     var sub=r['Subcategoria']||'';
-    var cartao=r['CartÃ£o / Banco']||r['Cartao / Banco']||'';
+    var cartao=r['CartÃÂ£o / Banco']||r['Cartao / Banco']||'';
     var tags=r['Tags']||'';
-    var mesRaw=r['MÃªs de ReferÃªncia']||r['Mes de Referencia']||Object.values(r)[11]||'';var mes=mesRaw;if(mesRaw&&typeof mesRaw==='string'&&mesRaw.includes('/')){var mp=mesRaw.trim().split('/');if(mp.length===2&&mp[1].length===4){mes=mp[0].toLowerCase()+'/'+mp[1].slice(2);}else if(mp.length===3){var meses=['janeiro','fevereiro','marÃ§o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];var mIdx=parseInt(mp[1])-1;mes=meses[mIdx]+'/'+(mp[2].length===4?mp[2].slice(2):mp[2]);}}else if(mesRaw&&mesRaw.toString().match(/^d{4}-d{2}/)){var dp=mesRaw.toString().split('-');var meses=['janeiro','fevereiro','marÃ§o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];mes=meses[parseInt(dp[1])-1]+'/'+dp[0].slice(2);}
-    var credito=r['CrÃ©dito?']||r['Credito?']||'NÃ£o';
+    var mesRaw=r['MÃÂªs de ReferÃÂªncia']||r['Mes de Referencia']||Object.values(r)[11]||'';var mes=mesRaw;if(mesRaw&&typeof mesRaw==='string'&&mesRaw.includes('/')){var mp=mesRaw.trim().split('/');if(mp.length===2&&mp[1].length===4){mes=mp[0].toLowerCase()+'/'+mp[1].slice(2);}else if(mp.length===3){var meses=['janeiro','fevereiro','marÃÂ§o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];var mIdx=parseInt(mp[1])-1;mes=meses[mIdx]+'/'+(mp[2].length===4?mp[2].slice(2):mp[2]);}}else if(mesRaw&&mesRaw.toString().match(/^d{4}-d{2}/)){var dp=mesRaw.toString().split('-');var meses=['janeiro','fevereiro','marÃÂ§o','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];mes=meses[parseInt(dp[1])-1]+'/'+dp[0].slice(2);}
+    var credito=r['CrÃÂ©dito?']||r['Credito?']||'NÃÂ£o';
     var df=dataRaw;
     if(dataRaw&&dataRaw.indexOf('/')===-1){var d=new Date(dataRaw);if(!isNaN(d))df=d.toLocaleDateString('pt-BR');}
     if(tipo&&valor>0)parsed.push({tipo:tipo,data:df,desc:desc,valor:valor,cat:cat,subcat:sub,cartao:cartao,tags:tags,mes:mes,mesKey:toMK(mes),credito:credito,rowIndex:i+2});
@@ -463,7 +463,7 @@ function procCSV(rows){
   if(parsed.length>0)allData=parsed;
 }
 async function doSync(){
-  var btn=document.getElementById('syncBtn');btn.classList.add('loading');btn.textContent='ð Sincronizando...';
+  var btn=document.getElementById('syncBtn');btn.classList.add('loading');btn.textContent='Ã°ÂÂÂ Sincronizando...';
   setStatus('grey','Conectando...');hideBanner();
   try{
     var cr=await fetch(CSV+'&t='+Date.now(),{redirect:'follow'});
@@ -471,15 +471,15 @@ async function doSync(){
     procCSV(pCSV(await cr.text()));
     try{var cfr=await fetch(ASU+'?t='+Date.now());if(cfr.ok){var cfg=await cfr.json();if(cfg&&cfg.categorias)configData=cfg;}}catch(e2){}
     buildPills();populateForm();applyPF();
-    setStatus('green','â Sincronizado â '+allData.length+' lanÃ§amentos');
-    showBanner('ok','â <strong>'+allData.length+' lanÃ§amentos</strong> carregados da planilha!');
-    document.getElementById('lastSync').textContent='Ãltima sync: '+new Date().toLocaleTimeString('pt-BR');
+    setStatus('green','Ã¢ÂÂ Sincronizado Ã¢ÂÂ '+allData.length+' lanÃÂ§amentos');
+    showBanner('ok','Ã¢ÂÂ <strong>'+allData.length+' lanÃÂ§amentos</strong> carregados da planilha!');
+    document.getElementById('lastSync').textContent='ÃÂltima sync: '+new Date().toLocaleTimeString('pt-BR');
     setTimeout(hideBanner,5000);
   }catch(e){
-    setStatus('orange','â ï¸ Falha â dados locais');
-    showBanner('warn','â ï¸ Erro: <strong>'+e.message+'</strong>. Verifique se a planilha estÃ¡ publicada na web.');
+    setStatus('orange','Ã¢ÂÂ Ã¯Â¸Â Falha Ã¢ÂÂ dados locais');
+    showBanner('warn','Ã¢ÂÂ Ã¯Â¸Â Erro: <strong>'+e.message+'</strong>. Verifique se a planilha estÃÂ¡ publicada na web.');
   }
-  btn.classList.remove('loading');btn.textContent='ð Sincronizar';
+  btn.classList.remove('loading');btn.textContent='Ã°ÂÂÂ Sincronizar';
 }
 function buildPills(){
   var keys=[];allData.forEach(function(d){if(d.mesKey&&keys.indexOf(d.mesKey)===-1)keys.push(d.mesKey);});keys.sort();
@@ -493,13 +493,13 @@ function selPill(key,btn){document.querySelectorAll('.period-pill').forEach(func
 function applyCustomRange(){var s=document.getElementById('rangeStart').value,e=document.getElementById('rangeEnd').value;if(!s||!e)return;var keys=[];allData.forEach(function(d){if(d.mesKey&&keys.indexOf(d.mesKey)===-1)keys.push(d.mesKey);});keys.sort();activeMonths=new Set(keys.filter(function(k){return k>=s&&k<=e;}));document.querySelectorAll('.period-pill').forEach(function(b){b.classList.remove('active');});applyPF();}
 function applyPF(){filtered=activeMonths.size===0?allData.slice():allData.filter(function(d){return activeMonths.has(d.mesKey);});renderAll();}
 function showView(id,btn){document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.getElementById('view-'+id).classList.add('active');btn.classList.add('active');if(id==='evolution')renderEvol();}
-function renderAll(){renderSum();renderIns();renderDonut();renderCatList();renderTx();if(document.getElementById('view-evolution').classList.contains('active'))renderEvol();}
+function renderAll(){renderSum();renderIns();renderDonut();renderCatList();populateTxFilters();renderTx();if(document.getElementById('view-evolution').classList.contains('active'))renderEvol();}
 function renderSum(){
   var inc=filtered.filter(function(d){return d.tipo==='Receita';}),exp=filtered.filter(function(d){return d.tipo==='Despesa';});
   var tI=inc.reduce(function(s,d){return s+d.valor;},0),tE=exp.reduce(function(s,d){return s+d.valor;},0),bal=tI-tE;
   document.getElementById('d-income').textContent=fmt(tI);document.getElementById('d-expense').textContent=fmt(tE);document.getElementById('d-balance').textContent=fmt(Math.abs(bal));
-  document.getElementById('d-income-ct').textContent=inc.length+' lanÃ§amentos';document.getElementById('d-expense-ct').textContent=exp.length+' lanÃ§amentos';
-  document.getElementById('d-balance').style.color=bal>=0?'#4f8eff':'#ff4f6d';document.getElementById('d-balance-sub').textContent=bal>=0?'â Saldo positivo':'â ï¸ Saldo negativo';
+  document.getElementById('d-income-ct').textContent=inc.length+' lanÃÂ§amentos';document.getElementById('d-expense-ct').textContent=exp.length+' lanÃÂ§amentos';
+  document.getElementById('d-balance').style.color=bal>=0?'#4f8eff':'#ff4f6d';document.getElementById('d-balance-sub').textContent=bal>=0?'Ã¢ÂÂ Saldo positivo':'Ã¢ÂÂ Ã¯Â¸Â Saldo negativo';
 }
 function renderIns(){
   var exp=filtered.filter(function(d){return d.tipo==='Despesa';}),inc=filtered.filter(function(d){return d.tipo==='Receita';});
@@ -562,7 +562,6 @@ function populateTxFilters(){
   if(mesSel){var mv=mesSel.value;mesSel.innerHTML='<option value="">Todos os meses</option>';Array.from(meses.keys()).sort().reverse().forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=meses.get(k);mesSel.appendChild(o);});mesSel.value=mv&&meses.has(mv)?mv:'';}
 }
 function renderTx(){
-  populateTxFilters();
   var tx=filtered.slice();
   if(txFilter==='Receita'||txFilter==='Despesa')tx=tx.filter(function(d){return d.tipo===txFilter;});
   if(txSearch)tx=tx.filter(function(d){return (d.desc||'').toLowerCase().includes(txSearch)||(d.cat||'').toLowerCase().includes(txSearch);});
@@ -571,13 +570,13 @@ function renderTx(){
   tx.sort(function(a,b){var da=parseDt(a.data),db=parseDt(b.data);return db&&da?db-da:0;});
   document.getElementById('txCount').textContent=tx.length+' registros';
   var el=document.getElementById('txBody');
-  if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lanÃ§amento encontrado.</div>';return;}
+  if(!tx.length){el.innerHTML='<div style="color:var(--mt);font-size:13px;padding:24px;text-align:center;">Nenhum lanÃÂ§amento encontrado.</div>';return;}
   el.innerHTML=tx.map(function(d,i){
-    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'â',ml=d.mesKey?mkLabel(d.mesKey):'â',idx=ri=d.rowIndex||0;
+    var cls=d.tipo==='Receita'?'r':'d',sinal=d.tipo==='Receita'?'+':'Ã¢ÂÂ',ml=d.mesKey?mkLabel(d.mesKey):'Ã¢ÂÂ',idx=ri=d.rowIndex||0;
     return '<div class="tx-row" data-ri="'+ri+'" ondblclick="openModalByRi('+ri+')" onclick="handleTxClick(event,'+ri+')" style="animation:slideIn .22s ease '+Math.min(i*.012,.3)+'s both"><span class="tx-desc" title="'+d.desc+'">'+d.desc+'</span><span class="tx-cat">'+d.cat+'</span><span class="tx-mes">'+ml+'</span><span class="tx-date">'+d.data+'</span><span class="tx-amount '+cls+'">'+sinal+' '+fmt(d.valor)+'</span><span class="tx-type '+cls+'">'+d.tipo+'</span></div>';
   }).join('');
 }
-/* âââ MODAL âââ */
+/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ MODAL Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
 var lastClickIdx=-1,lastClickTime=0;
 function handleTxClick(e,ri){
   var now=Date.now();
@@ -602,7 +601,7 @@ function openModal(idx){
   document.getElementById('eDesc').value=d.desc||'';
   document.getElementById('eValor').value=d.valor||'';
   document.getElementById('eTag').value=d.tags||'N/A';
-  document.getElementById('eCredito').value=d.credito||'NÃ£o';
+  document.getElementById('eCredito').value=d.credito||'NÃÂ£o';
   var sB=document.getElementById('eCartao');sB.innerHTML='<option value="">Selecione...</option>';
   (configData.bancos||[]).forEach(function(b){sB.innerHTML+='<option value="'+b+'">'+b+'</option>';});sB.value=d.cartao||'';
   var eCats=(configData.categorias&&configData.categorias[modalTipo])?configData.categorias[modalTipo]:{};
@@ -637,46 +636,46 @@ function onModalCatChange(){
   var sSub=document.getElementById('eSubcat');sSub.innerHTML='<option value="">Selecione...</option>';
   subs.forEach(function(s){sSub.innerHTML+='<option value="'+s+'">'+s+'</option>';});
 }
-/* ExclusÃ£o */
+/* ExclusÃÂ£o */
 function showDeleteConfirm(){document.getElementById('delConfirm').style.display='block';document.getElementById('eSaveBtn').disabled=true;}
 function cancelDelete(){document.getElementById('delConfirm').style.display='none';document.getElementById('eSaveBtn').disabled=false;}
 async function confirmDelete(){
   if(editingIdx===null)return;
   var d=allData[editingIdx];if(!d)return;
   document.getElementById('eDelBtn').disabled=true;
-  var btn=document.getElementById('eDelBtn');btn.textContent='ðï¸ Excluindo...';
+  var btn=document.getElementById('eDelBtn');btn.textContent='Ã°ÂÂÂÃ¯Â¸Â Excluindo...';
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify({acao:'delete',rowIndex:d.rowIndex}),mode:'no-cors'});
     // Remove localmente
     var globalIdx=ri=d.rowIndex||0;if(globalIdx!==-1)allData.splice(globalIdx,1);
-    // Reindexar rowIndex dos prÃ³ximos (pois a linha foi removida)
+    // Reindexar rowIndex dos prÃÂ³ximos (pois a linha foi removida)
     for(var i=globalIdx;i<allData.length;i++){if(allData[i].rowIndex>d.rowIndex)allData[i].rowIndex--;}
-    showModalMsg('ok','â LanÃ§amento excluÃ­do! Sincronize para confirmar.');
+    showModalMsg('ok','Ã¢ÂÂ LanÃÂ§amento excluÃÂ­do! Sincronize para confirmar.');
     renderAll();buildPills();
     setTimeout(closeModal,1500);
-  }catch(e){showModalMsg('err','â Erro: '+e.message);btn.disabled=false;btn.textContent='ðï¸ Excluir';}
+  }catch(e){showModalMsg('err','Ã¢ÂÂ Erro: '+e.message);btn.disabled=false;btn.textContent='Ã°ÂÂÂÃ¯Â¸Â Excluir';}
 }
-/* Salvar ediÃ§Ã£o */
+/* Salvar ediÃÂ§ÃÂ£o */
 async function saveEdit(){
   if(editingIdx===null)return;
   var d=allData[editingIdx];if(!d)return;
   var desc=document.getElementById('eDesc').value.trim(),valorRaw=document.getElementById('eValor').value,dataVal=document.getElementById('eData').value,mesRef=document.getElementById('eMesRef').value,anoRef=document.getElementById('eAnoRef').value;
-  if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','â ï¸ Preencha Data, MÃªs/Ano, DescriÃ§Ã£o e Valor.');return;}
-  var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='ð¾ Salvando...';
+  if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','Ã¢ÂÂ Ã¯Â¸Â Preencha Data, MÃÂªs/Ano, DescriÃÂ§ÃÂ£o e Valor.');return;}
+  var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='Ã°ÂÂÂ¾ Salvando...';
   var dtParts=dataVal.split('-');var dataFmt=dtParts[2]+'/'+dtParts[1]+'/'+dtParts[0];
-  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,"").replace(",",".")),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Ãnica',numParcelas:1};
+  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(String(valorRaw).replace(/\./g,"").replace(",",".")),cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'ÃÂnica',numParcelas:1};
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
-    var mesLower={'Janeiro':'janeiro','Fevereiro':'fevereiro','MarÃ§o':'marÃ§o','Abril':'abril','Maio':'maio','Junho':'junho','Julho':'julho','Agosto':'agosto','Setembro':'setembro','Outubro':'outubro','Novembro':'novembro','Dezembro':'dezembro'};
+    var mesLower={'Janeiro':'janeiro','Fevereiro':'fevereiro','MarÃÂ§o':'marÃÂ§o','Abril':'abril','Maio':'maio','Junho':'junho','Julho':'julho','Agosto':'agosto','Setembro':'setembro','Outubro':'outubro','Novembro':'novembro','Dezembro':'dezembro'};
     d.mes=(mesLower[mesRef]||mesRef.toLowerCase())+'/'+String(anoRef).slice(2);d.mesKey=toMK(d.mes);
-    showModalMsg('ok','â AlteraÃ§Ã£o salva! Sincronize para confirmar.');
+    showModalMsg('ok','Ã¢ÂÂ AlteraÃÂ§ÃÂ£o salva! Sincronize para confirmar.');
     renderAll();buildPills();setTimeout(closeModal,1800);
-  }catch(e){showModalMsg('err','â Erro: '+e.message);}
-  btn.disabled=false;btn.textContent='ð¾ Salvar';
+  }catch(e){showModalMsg('err','Ã¢ÂÂ Erro: '+e.message);}
+  btn.disabled=false;btn.textContent='Ã°ÂÂÂ¾ Salvar';
 }
 function showModalMsg(type,html){var el=document.getElementById('modalMsg');el.className='modal-msg '+type;el.innerHTML=html;el.style.display='block';}
-/* âââ FORMULÃRIO NOVO âââ */
+/* Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ FORMULÃÂRIO NOVO Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ */
 function populateForm(){
   var sB=document.getElementById('fCartao');sB.innerHTML='<option value="">Selecione...</option>';
   (configData.bancos||[]).filter(function(b){return b;}).forEach(function(b){sB.innerHTML+='<option value="'+b+'">'+b+'</option>';});
@@ -690,17 +689,17 @@ function onCatChange(){var cat=document.getElementById('fCat').value;var cats=(c
 function onRecChange(){document.getElementById('fParcelasWrap').style.display=document.getElementById('fRec').value==='Parcelada'?'flex':'none';}
 async function submitForm(){
   var desc=document.getElementById('fDesc').value.trim(),valorRaw=document.getElementById('fValor').value,dataVal=document.getElementById('fData').value,mesRef=document.getElementById('fMesRef').value,anoRef=document.getElementById('fAnoRef').value,rec=document.getElementById('fRec').value,nParcEl=document.getElementById('fParcelas');
-  if(!desc||!valorRaw||!dataVal||!mesRef){showFormMsg('warn','â ï¸ Preencha: Tipo, Data, MÃªs/Ano, DescriÃ§Ã£o e Valor.');return;}
-  if(rec==='Parcelada'&&(!nParcEl.value||parseInt(nParcEl.value)<2)){showFormMsg('warn','â ï¸ Informe o nÃºmero de parcelas (mÃ­nimo 2).');return;}
-  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(valorRaw),cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'Ãnica':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
-  var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=rec==='Parcelada'?'ð¾ Salvando '+payload.numParcelas+' parcelas...':rec==='Fixa'?'ð¾ Salvando 12 meses...':'ð¾ Salvando...';
+  if(!desc||!valorRaw||!dataVal||!mesRef){showFormMsg('warn','Ã¢ÂÂ Ã¯Â¸Â Preencha: Tipo, Data, MÃÂªs/Ano, DescriÃÂ§ÃÂ£o e Valor.');return;}
+  if(rec==='Parcelada'&&(!nParcEl.value||parseInt(nParcEl.value)<2)){showFormMsg('warn','Ã¢ÂÂ Ã¯Â¸Â Informe o nÃÂºmero de parcelas (mÃÂ­nimo 2).');return;}
+  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:parseFloat(valorRaw),cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'ÃÂnica':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
+  var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=rec==='Parcelada'?'Ã°ÂÂÂ¾ Salvando '+payload.numParcelas+' parcelas...':rec==='Fixa'?'Ã°ÂÂÂ¾ Salvando 12 meses...':'Ã°ÂÂÂ¾ Salvando...';
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
     var extra=rec==='Parcelada'?' ('+payload.numParcelas+' parcelas)':rec==='Fixa'?' (12 meses)':'';
-    doSync();showFormMsg('ok','â Salvo'+extra+'! Clique em ð Sincronizar para ver.');
+    doSync();showFormMsg('ok','Ã¢ÂÂ Salvo'+extra+'! Clique em Ã°ÂÂÂ Sincronizar para ver.');
     document.getElementById('fDesc').value='';document.getElementById('fValor').value='';document.getElementById('fParcelas').value='';
-  }catch(e){showFormMsg('err','â Erro: '+e.message);}
-  btn.disabled=false;btn.textContent='ð¾ Salvar no Google Sheets';
+  }catch(e){showFormMsg('err','Ã¢ÂÂ Erro: '+e.message);}
+  btn.disabled=false;btn.textContent='Ã°ÂÂÂ¾ Salvar no Google Sheets';
 }
 function showFormMsg(type,html){var el=document.getElementById('formMsg');el.className='form-msg '+type;el.innerHTML=html;el.style.display='block';if(type==='ok')setTimeout(function(){el.style.display='none';},8000);}
 document.addEventListener('DOMContentLoaded',function(){

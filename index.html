@@ -621,7 +621,7 @@ async function confirmDelete(){
     var globalIdx=ri=d.rowIndex||0;if(globalIdx!==-1)allData.splice(globalIdx,1);
     // Reindexar rowIndex dos próximos (pois a linha foi removida)
     for(var i=globalIdx;i<allData.length;i++){if(allData[i].rowIndex>d.rowIndex)allData[i].rowIndex--;}
-    showModalMsg('ok','✅ Lançamento excluído! Sincronize para confirmar.');
+    doSync();showModalMsg('ok','✅ Lançamento excluído!');
     renderAll();buildPills();
     setTimeout(closeModal,1500);
   }catch(e){showModalMsg('err','❌ Erro: '+e.message);btn.disabled=false;btn.textContent='🗑️ Excluir';}
@@ -640,7 +640,7 @@ async function saveEdit(){
     d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
     var mesLower={'Janeiro':'janeiro','Fevereiro':'fevereiro','Março':'março','Abril':'abril','Maio':'maio','Junho':'junho','Julho':'julho','Agosto':'agosto','Setembro':'setembro','Outubro':'outubro','Novembro':'novembro','Dezembro':'dezembro'};
     d.mes=(mesLower[mesRef]||mesRef.toLowerCase())+'/'+String(anoRef).slice(2);d.mesKey=toMK(d.mes);
-    showModalMsg('ok','✅ Alteração salva! Sincronize para confirmar.');
+    doSync();showModalMsg('ok','✅ Alteração salva!');
     renderAll();buildPills();setTimeout(closeModal,1800);
   }catch(e){showModalMsg('err','❌ Erro: '+e.message);}
   btn.disabled=false;btn.textContent='💾 Salvar';
@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 });
-function init(){loadFallback();buildPills();populateForm();applyPF();}
+function init(){loadFallback();buildPills();populateForm();applyPF();doSync();}
 init();
 </script>
 </body>

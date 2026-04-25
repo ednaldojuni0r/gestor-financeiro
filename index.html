@@ -341,7 +341,7 @@ function renderCharts(fData){
     incData.push(iV);expData.push(eV);balData.push(iV-eV);
   });
   var bc=document.getElementById('barChart');if(bc){
-    if(window.barChart)window.barChart.destroy();
+    if(window.barChart && typeof window.barChart.destroy === 'function')window.barChart.destroy();
     var ds=[];
     if(barMode==='inc')ds.push({label:'Receitas',data:incData,backgroundColor:'rgba(0,229,176,.6)',borderColor:'#00e5b0',borderWidth:2});
     else if(barMode==='exp')ds.push({label:'Despesas',data:expData,backgroundColor:'rgba(255,79,109,.6)',borderColor:'#ff4f6d',borderWidth:2});
@@ -351,7 +351,7 @@ function renderCharts(fData){
   var catSum={};fData.forEach(function(d){if(d.tipo==='Despesa'&&d.cat)catSum[d.cat]=(catSum[d.cat]||0)+parseFloat(d.valor||0);});
   var catArr=Object.keys(catSum).map(function(c){return{c:c,v:catSum[c]};}).sort(function(a,b){return b.v-a.v;}).slice(0,7);
   var pc=document.getElementById('pieChart');if(pc){
-    if(window.pieChart)window.pieChart.destroy();
+    if(window.pieChart && typeof window.pieChart.destroy === 'function')window.pieChart.destroy();
     var colors=['#00e5b0','#4f8eff','#ff4f6d','#ffb547','#7c3aed','#ec4899','#10b981'];
     window.pieChart=new Chart(pc,{type:'doughnut',data:{labels:catArr.map(function(x){return x.c;}),datasets:[{data:catArr.map(function(x){return x.v;}),backgroundColor:colors,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#e8eaf0',padding:10,font:{size:11}}}}}});
   }
@@ -362,7 +362,7 @@ function renderCharts(fData){
     cumInc+=iV;cumExp+=eV;cumBal.push(cumInc-cumExp);
   });
   var lc=document.getElementById('lineChart');if(lc){
-    if(window.lineChart)window.lineChart.destroy();
+    if(window.lineChart && typeof window.lineChart.destroy === 'function')window.lineChart.destroy();
     window.lineChart=new Chart(lc,{type:'line',data:{labels:labels,datasets:[{label:'Saldo Acumulado',data:cumBal,borderColor:'#4f8eff',backgroundColor:'rgba(79,142,255,.1)',fill:true,tension:.3,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{color:'#6b7280',callback:function(v){return'R$ '+fmt(v);}},grid:{color:'rgba(255,255,255,0.05)'}},x:{ticks:{color:'#6b7280'},grid:{display:false}}}}});
   }
   var total=catArr.reduce(function(s,x){return s+x.v;},0);

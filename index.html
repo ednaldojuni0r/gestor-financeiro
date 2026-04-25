@@ -258,42 +258,57 @@ function setTab(t){document.getElementById('tabDash').style.display=t==='dash'?'
 async function doSync(){
   var btn=document.getElementById('syncBtn');btn.classList.add('loading');btn.textContent='⏳ Sincronizando...';
   try{
-    var res=await fetch(ASU+'?acao=fetch&ts='+Date.now(),{method:'GET',cache:'no-store'});
+    // Tenta primeiro com fetch normal
+    var res = await fetch(ASU+'?acao=fetch&ts='+Date.now(),{method:'GET',cache:'no-store'}).catch(function(){return null;});
     
-    // Verifica se a resposta está OK
+    // Se fetch falhou (CORS), usa script tag como fallback
+    if(!res){
+      console.log('Fetch bloqueado por CORS, usando método alternativo...');
+      var d = await new Promise(function(resolve,reject){
+        window.syncCallback=resolve;
+        var script=document.createElement('script');
+        script.src=ASU+'?acao=fetch&callback=syncCallback&ts='+Date.now();
+        script.onerror=function(){reject(new Error('Falha ao carregar. Vá em Apps Script → Implantar → Gerenciar implantações → Editar → "Quem tem acesso" → "Qualquer pessoa"'));};
+        document.head.appendChild(script);
+        setTimeout(function(){document.head.removeChild(script);},30000);
+      });
+      allData=d.data||[];
+      configData=d.config||{};
+      document.getElementById('lastSync').textContent='Última sinc: '+new Date().toLocaleTimeString();
+      document.getElementById('banner').classList.add('hidden');
+      renderAll();buildPills();populateForm();
+      btn.classList.remove('loading');btn.textContent='🔄 Sincronizar';
+      return;
+    }
+    
     if(!res.ok){
-      throw new Error('Erro HTTP: '+res.status+' - Verifique se a URL do Apps Script está correta e se a implantação está ativa');
+      throw new Error('Erro HTTP: '+res.status);
     }
     
     var text=await res.text();
     
     if(!text||text.trim()===''){
-      throw new Error('Resposta vazia. Verifique: 1) URL do Apps Script correta? 2) Planilha com aba "Configuracoes"? 3) Implantação ativa?');
+      throw new Error('Resposta vazia');
     }
     
-    // Tenta fazer parse do JSON
     var d;
     try{
       d=JSON.parse(text);
     }catch(parseErr){
-      console.error('Resposta recebida:',text);
-      throw new Error('Resposta não é JSON válido. Resposta: '+text.substring(0,200));
+      throw new Error('Resposta inválida');
     }
     
-    // Verifica se retornou erro do Apps Script
     if(d.erro){
-      throw new Error('Erro do Apps Script: '+d.erro);
+      throw new Error(d.erro);
     }
     
-    // Extrai os dados corretamente
     allData=d.data||[];
     configData=d.config||{};
     document.getElementById('lastSync').textContent='Última sinc: '+new Date().toLocaleTimeString();
     document.getElementById('banner').classList.add('hidden');
     renderAll();buildPills();populateForm();
   }catch(e){
-    console.error('Erro detalhado:',e);
-    document.getElementById('banner').innerHTML='❌ Erro ao sincronizar: '+e.message;
+    document.getElementById('banner').innerHTML='❌ '+e.message;
     document.getElementById('banner').className='banner warn';
   }
   btn.classList.remove('loading');btn.textContent='🔄 Sincronizar';

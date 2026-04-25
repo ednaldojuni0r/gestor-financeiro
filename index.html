@@ -250,7 +250,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 </div>
 </div>
 <script>
-const ASU='https://script.google.com/macros/s/AKfycbwo3GNxvqKJrxkDY9Uy6P_DLNQRS2wTQOsn7vt9vCNjDVvE5cVUMjYaJG_OOuxXM0iY/exec';
+const ASU='https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec';
 var allData=[],configData={},filterType='all',curPeriod='all',dateStart=null,dateEnd=null,formTipo='Receita',editingIdx=null,modalTipo='',barMode='inc';
 const MN={1:'Janeiro',2:'Fevereiro',3:'Março',4:'Abril',5:'Maio',6:'Junho',7:'Julho',8:'Agosto',9:'Setembro',10:'Outubro',11:'Novembro',12:'Dezembro'};
 function fmt(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -258,13 +258,38 @@ function setTab(t){document.getElementById('tabDash').style.display=t==='dash'?'
 async function doSync(){
   var btn=document.getElementById('syncBtn');btn.classList.add('loading');btn.textContent='⏳ Sincronizando...';
   try{
-    var res=await fetch(ASU+'?acao=fetch&ts='+Date.now(),{method:'GET',mode:'no-cors',cache:'no-store'});
-    var text=await res.text();if(!text||text.trim()==='')throw new Error('Resposta vazia do servidor');
-    var d=JSON.parse(text);allData=d.data||[];configData=d.config||{};
+    var res=await fetch(ASU+'?acao=fetch&ts='+Date.now(),{method:'GET',cache:'no-store'});
+    
+    // Verifica se a resposta está OK
+    if(!res.ok){
+      throw new Error('Erro HTTP: '+res.status+' - Verifique se a URL do Apps Script está correta e se a implantação está ativa');
+    }
+    
+    var text=await res.text();
+    
+    if(!text||text.trim()===''){
+      throw new Error('Resposta vazia. Verifique: 1) URL do Apps Script correta? 2) Planilha com aba "Configuracoes"? 3) Implantação ativa?');
+    }
+    
+    // Tenta fazer parse do JSON
+    var d;
+    try{
+      d=JSON.parse(text);
+    }catch(parseErr){
+      console.error('Resposta recebida:',text);
+      throw new Error('Resposta não é JSON válido. Resposta: '+text.substring(0,200));
+    }
+    
+    allData=d.data||[];
+    configData=d.config||{};
     document.getElementById('lastSync').textContent='Última sinc: '+new Date().toLocaleTimeString();
     document.getElementById('banner').classList.add('hidden');
     renderAll();buildPills();populateForm();
-  }catch(e){console.error(e);document.getElementById('banner').innerHTML='❌ Erro ao sincronizar: '+e.message;document.getElementById('banner').className='banner warn';}
+  }catch(e){
+    console.error('Erro detalhado:',e);
+    document.getElementById('banner').innerHTML='❌ Erro ao sincronizar: '+e.message;
+    document.getElementById('banner').className='banner warn';
+  }
   btn.classList.remove('loading');btn.textContent='🔄 Sincronizar';
 }
 function loadFallback(){

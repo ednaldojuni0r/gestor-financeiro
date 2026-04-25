@@ -280,6 +280,12 @@ async function doSync(){
       throw new Error('Resposta não é JSON válido. Resposta: '+text.substring(0,200));
     }
     
+    // Verifica se retornou erro do Apps Script
+    if(d.erro){
+      throw new Error('Erro do Apps Script: '+d.erro);
+    }
+    
+    // Extrai os dados corretamente
     allData=d.data||[];
     configData=d.config||{};
     document.getElementById('lastSync').textContent='Última sinc: '+new Date().toLocaleTimeString();

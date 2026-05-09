@@ -10,19 +10,7 @@
 :root{--bg:#0a0d14;--sf:#111520;--sf2:#161b2a;--sf3:#1c2235;--bd:rgba(255,255,255,0.07);--ac:#00e5b0;--ac2:#4f8eff;--dg:#ff4f6d;--wn:#ffb547;--tx:#e8eaf0;--mt:#6b7280;--r:14px;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;}
-.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
-.login-card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:48px;max-width:480px;width:100%;text-align:center;}
-.login-logo{width:80px;height:80px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto 24px;}
-.login-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:12px;}
-.login-title span{color:var(--ac);}
-.login-subtitle{color:var(--mt);font-size:15px;margin-bottom:36px;line-height:1.6;}
-.google-btn{background:#fff;color:#000;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;padding:14px 28px;border-radius:12px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:12px;transition:transform .2s,box-shadow .2s;}
-.google-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,255,255,.15);}
-.google-icon{width:20px;height:20px;}
-.login-footer{margin-top:32px;font-size:12px;color:var(--mt);line-height:1.6;}
-.login-error{background:rgba(255,79,109,.12);border:1px solid rgba(255,79,109,.3);color:var(--dg);border-radius:10px;padding:12px 18px;margin-bottom:24px;font-size:13px;line-height:1.6;}
-.app{max-width:1280px;margin:0 auto;padding:0 24px 80px;display:none;}
-.app.active{display:block;}
+.app{max-width:1280px;margin:0 auto;padding:0 24px 80px;}
 nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0 26px;border-bottom:1px solid var(--bd);margin-bottom:24px;flex-wrap:wrap;gap:14px;}
 .logo{display:flex;align-items:center;gap:12px;}
 .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
@@ -164,27 +152,6 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
-<div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">💸</div>
-    <h1 class="login-title">Gestor<span>Financeiro</span></h1>
-    <p class="login-subtitle">Faça login com sua conta Google para acessar seu gestor financeiro pessoal de forma segura.</p>
-    
-    <div class="login-error" id="loginError" style="display:none;"></div>
-    
-    <button class="google-btn" onclick="handleGoogleLogin()">
-      <svg class="google-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-      Entrar com Google
-    </button>
-    
-    <div class="login-footer">
-      🔒 Seus dados estão protegidos e só você tem acesso.<br>
-      Utilizamos autenticação segura do Google.
-    </div>
-  </div>
-</div>
-
 <!-- MODAL DE EDIÇÃO / EXCLUSÃO -->
 <div class="modal-overlay" id="editModal" onclick="handleOverlayClick(event)">
   <div class="modal">
@@ -255,7 +222,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
   </div>
 </div>
 
-<div class="app" id="appContainer">
+<div class="app">
   <nav>
     <div class="logo">
       <div class="logo-icon">💸</div>
@@ -417,14 +384,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
 </div>
 
 <script>
-var CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vSB2TLVDL0vkKoQi-lqD3y_CfZQ3YqW6yjH5KBZH5pAOKQQKzqe9bVqTgwELaZFDwNvCgv7jlywDZhW/pub?gid=0&single=true&output=csv';
 var ASU='https://script.google.com/macros/s/AKfycbwn6dXD4p3SJy-k2Ww_sm5ett8j862s97XtNfceSpF1Zr0-O4-pt_c6nxfT8L9i4xW2/exec';
-// ═══════════════════════════════════════════════════════════════
-// AUTENTICAÇÃO OAUTH - Gerenciada pelo Google Apps Script
-// ═══════════════════════════════════════════════════════════════
-var currentUser = null;
-var isAuthenticated = false;
-// ═══════════════════════════════════════════════════════════════
 var CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR2RJ16gdxsqOhaAKRWJVWnB-i8eT1LQ5NppxMNqp5RemWbVAuPtTPE0XtqYH3NT6wUXzTIqM1MKazq/pub?gid=0&single=true&output=csv';
 var MM={'janeiro':'01','fevereiro':'02','março':'03','marco':'03','abril':'04','maio':'05','junho':'06','julho':'07','agosto':'08','setembro':'09','outubro':'10','novembro':'11','dezembro':'12'};
 var MN=['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -462,88 +422,6 @@ var FB=[
 function setStatus(c,m){document.getElementById('statusDot').className='dot '+c;document.getElementById('statusText').textContent=m;}
 function showBanner(t,h){var b=document.getElementById('banner');b.className='banner '+t;b.innerHTML=h;}
 function hideBanner(){document.getElementById('banner').className='banner hidden';}
-
-/* ═══════════════════════════════════════════════════════════════
-   AUTENTICAÇÃO OAUTH COM GOOGLE
-   ═══════════════════════════════════════════════════════════════ */
-
-/**
- * Função chamada quando usuário clica em "Entrar com Google"
- */
-async function handleGoogleLogin() {
-  // Mostrar feedback de carregamento
-  var btn = document.querySelector('.google-btn');
-  var originalText = btn.innerHTML;
-  btn.innerHTML = '<div style="width:20px;height:20px;border:3px solid #000;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div> Conectando...';
-  btn.disabled = true;
-  
-  // Verificar autenticação
-  var authenticated = await checkAuthentication();
-  
-  if (!authenticated) {
-    // Se não conseguiu autenticar, restaurar botão
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
-}
-
-// Adicionar animação de loading
-var style = document.createElement('style');
-style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
-document.head.appendChild(style);
-
-/**
- * Verifica se o usuário está autenticado
- */
-async function checkAuthentication() {
-  try {
-    var response = await fetch(ASU + '?ajax=true&t=' + Date.now());
-    var data = await response.json();
-    
-    if (data.isAuthorized) {
-      // Usuário autenticado
-      isAuthenticated = true;
-      currentUser = {
-        email: data.email,
-        name: data.name || data.email.split('@')[0]
-      };
-      
-      // Esconder tela de login e mostrar app
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('appContainer').classList.add('active');
-      
-      // Atualizar badge do usuário
-      var initials = currentUser.name.substring(0, 2).toUpperCase();
-      document.querySelector('.avatar').textContent = initials;
-      document.querySelector('.user-name').textContent = currentUser.name;
-      
-      // Inicializar app
-      initApp();
-      return true;
-    } else {
-      // Usuário não autenticado
-      isAuthenticated = false;
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('appContainer').classList.remove('active');
-      
-      // Mostrar erro com o email que tentou acessar
-      var errorMsg = 'O email ' + (data.email || 'não identificado') + ' não tem permissão para acessar este sistema. Entre em contato com o administrador.';
-      document.getElementById('loginError').textContent = errorMsg;
-      document.getElementById('loginError').style.display = 'block';
-      return false;
-    }
-  } catch (error) {
-    console.error('Erro ao verificar autenticação:', error);
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appContainer').classList.remove('active');
-    document.getElementById('loginError').textContent = 'Erro ao conectar com o servidor. Verifique se você está logado no Google e tente novamente.';
-    document.getElementById('loginError').style.display = 'block';
-    return false;
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════ */
-
 function loadFallback(){
   allData=FB.map(function(r){return Object.assign({},r,{mesKey:toMK(r.mes)});});
   configData={bancos:['Itaú','Bradesco','Nubank','Inter','C6 Bank','Caixa'],categorias:{Receita:{Investimentos:['Dividendos','Rendimento Automático'],Outros:['Outras receitas','Reembolsos'],Trabalho:['Salário','Freelance']},Despesa:{Alimentação:['Supermercado','Padaria','Refeição fora de casa (trabalho)'],Lazer:['Restaurantes / bares / festas','Ifood'],Contas:['Financiamento','Condomínio','Internet','Celular','Conta de água'],Vestiário:['Roupas','Calçados'],Saúde:['Medicamentos','Terapia'],Pessoais:['Barbeiro','Academia'],Transporte:['Uber','Combustível'],Assinaturas:['Streaming','Seguros'],Presentes:['Presentes diversos'],Diversas:['Outros gastos'],Casa:['Móveis','Utensílios'],Educação:['Cursos Online','Livros']}}};
@@ -808,11 +686,8 @@ document.addEventListener('DOMContentLoaded',function(){
   });
 });
 });
-function initApp(){loadFallback();buildPills();populateForm();applyPF();doSync();}
-// Verificar autenticação ao carregar a página
-document.addEventListener('DOMContentLoaded', function(){
-  checkAuthentication();
-});
+function init(){loadFallback();buildPills();populateForm();applyPF();doSync();}
+init();
 </script>
 </body>
 </html>

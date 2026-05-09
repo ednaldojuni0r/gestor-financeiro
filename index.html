@@ -454,7 +454,7 @@ async function doSync(){
     var cr=await fetch(CSV+'&t='+Date.now(),{redirect:'follow'});
     if(!cr.ok)throw new Error('HTTP '+cr.status);
     procCSV(pCSV(await cr.text()));
-    try{var cfr=await fetch(ASU+'?t='+Date.now());if(cfr.ok){var cfg=await cfr.json();if(cfg&&cfg.categorias)configData=cfg;}}catch(e2){}
+    try{var cfr=await fetch(ASU+'?t='+Date.now());if(cfr.ok){var cfg=await cfr.json();if(cfg&&cfg.config)configData=cfg.config;}}catch(e2){}
     buildPills();populateForm();applyPF();
     setStatus('green','✅ Sincronizado — '+allData.length+' lançamentos');
     showBanner('ok','✅ <strong>'+allData.length+' lançamentos</strong> carregados da planilha!');

@@ -1,0 +1,194 @@
+function doGet(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // 1. Buscar configurações da aba "Configuracoes"
+    var sheetConfig = ss.getSheetByName("Configuracoes");
+    var config = { bancos: [], categorias: { "Receita": {}, "Despesa": {} } };
+    
+    if (sheetConfig && sheetConfig.getLastRow() >= 2) {
+      var dados = sheetConfig.getRange(2, 1, sheetConfig.getLastRow() - 1, 4).getValues();
+      dados.forEach(function(linha) {
+        var banco = linha[0];
+        var tipo = linha[1] ? linha[1].toString().trim() : null;
+        var cat = linha[2] ? linha[2].toString().trim() : null;
+        var sub = linha[3] ? linha[3].toString().trim() : null;
+        if (banco && config.bancos.indexOf(banco) === -1) config.bancos.push(banco);
+        if (tipo && cat && sub && config.categorias[tipo]) {
+          if (!config.categorias[tipo][cat]) config.categorias[tipo][cat] = [];
+          if (config.categorias[tipo][cat].indexOf(sub) === -1) config.categorias[tipo][cat].push(sub);
+        }
+      });
+    }
+    
+    // 2. Buscar transações da primeira aba (aba de dados)
+    var sheetData = ss.getSheets()[0];
+    var data = [];
+    var mesesNomes = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+    
+    if (sheetData.getLastRow() >= 2) {
+      var linhas = sheetData.getRange(2, 1, sheetData.getLastRow() - 1, 13).getValues();
+      linhas.forEach(function(linha, index) {
+        if (linha[0]) {
+          var dataVenc = linha[1];
+          var dataRef = linha[11];
+          var mesAno = "";
+          
+          if (dataRef && dataRef instanceof Date) {
+            var mes = mesesNomes[dataRef.getMonth()];
+            var ano = dataRef.getFullYear().toString().slice(2);
+            mesAno = mes + "/" + ano;
+          }
+          
+          var dataFormatada = "";
+          if (dataVenc && dataVenc instanceof Date) {
+            var dia = ("0" + dataVenc.getDate()).slice(-2);
+            var mesNum = ("0" + (dataVenc.getMonth() + 1)).slice(-2);
+            var anoNum = dataVenc.getFullYear();
+            dataFormatada = dia + "/" + mesNum + "/" + anoNum;
+          }
+          
+          data.push({
+            rowIndex: index + 2,
+            tipo: linha[0],
+            data: dataFormatada,
+            desc: linha[2],
+            valor: parseFloat(linha[3]) || 0,
+            cartao: linha[4] || "",
+            cat: linha[5] || "",
+            subcat: linha[6] || "",
+            tags: linha[7] || "",
+            mes: mesAno,
+            credito: linha[12] || "débito"
+          });
+        }
+      });
+    }
+    
+    // 3. Retornar dados
+    var resultado = {
+      config: config,
+      data: data
+    };
+    
+    // Suporte a JSONP para contornar CORS
+    var callback = e.parameter.callback;
+    if (callback) {
+      return ContentService.createTextOutput(callback + '(' + JSON.stringify(resultado) + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify(resultado)).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    var erro = {erro: err.message, stack: err.stack};
+    var callback = e.parameter.callback;
+    if (callback) {
+      return ContentService.createTextOutput(callback + '(' + JSON.stringify(erro) + ')').setMimeType(ContentService.MimeType.JAVASCRIPT);
+    }
+    return ContentService.createTextOutput(JSON.stringify(erro)).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Função auxiliar para converter valores em formato brasileiro ou internacional para número
+ * Aceita: 1234.56, 1.234,56, "1234,56", "1.234,56", 1234,56
+ * Retorna: número float válido
+ */
+function parseValorSeguro(valor) {
+  if (typeof valor === 'number') {
+    return valor;
+  }
+  
+  if (!valor) {
+    return 0;
+  }
+  
+  // Converte para string
+  var valorStr = String(valor).trim();
+  
+  // Remove espaços
+  valorStr = valorStr.replace(/\s/g, '');
+  
+  // Se tiver vírgula e ponto, determina qual é o separador decimal
+  if (valorStr.indexOf(',') > -1 && valorStr.indexOf('.') > -1) {
+    // Se o ponto vem antes da vírgula: formato BR (1.234,56)
+    if (valorStr.indexOf('.') < valorStr.indexOf(',')) {
+      valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+    } else {
+      // Se a vírgula vem antes do ponto: formato US (1,234.56)
+      valorStr = valorStr.replace(/,/g, '');
+    }
+  } 
+  // Se tiver só vírgula: formato BR (1234,56 ou 123,45)
+  else if (valorStr.indexOf(',') > -1) {
+    valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+  }
+  // Se tiver só ponto: formato US (1234.56) - já está ok
+  
+  var resultado = parseFloat(valorStr);
+  return isNaN(resultado) ? 0 : resultado;
+}
+
+function doPost(e) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheets()[0];
+    var dados = JSON.parse(e.postData.contents);
+    var mesesMap = {"Janeiro":0,"Fevereiro":1,"Marco":2,"Março":2,"Abril":3,"Maio":4,"Junho":5,"Julho":6,"Agosto":7,"Setembro":8,"Outubro":9,"Novembro":10,"Dezembro":11};
+
+    // EXCLUSAO
+    if (dados.acao === 'delete' && dados.rowIndex) {
+      sheet.deleteRow(parseInt(dados.rowIndex));
+      return ContentService.createTextOutput("Excluido").setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    // ATUALIZACAO
+    if (dados.acao === 'update' && dados.rowIndex) {
+      var row = parseInt(dados.rowIndex);
+      var dataVenc = new Date(dados.dataManual + "T12:00:00");
+      var dataRef = new Date(dados.anoReferencia, mesesMap[dados.mesReferencia], 1);
+      
+      // CORREÇÃO: Usar parseValorSeguro para garantir conversão correta
+      var valorNumerico = parseValorSeguro(dados.valorTotal);
+      
+      sheet.getRange(row, 1, 1, 13).setValues([[
+        dados.tipo, dataVenc, dados.descricao, valorNumerico,
+        dados.cartao, dados.categoria, dados.subcategoria, dados.tags,
+        "Unica", "1/1", "", dataRef, dados.isCredito
+      ]]);
+      return ContentService.createTextOutput("Atualizado").setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    // INSERCAO (novo lancamento)
+    var repeticoes = 1;
+    
+    // CORREÇÃO: Usar parseValorSeguro para garantir conversão correta
+    var valorTotal = parseValorSeguro(dados.valorTotal);
+    var valorFinal = valorTotal;
+    
+    var tipoRecorrencia = dados.tipo === "Despesa" ? dados.recorrencia : "Unica";
+    if (dados.tipo === "Despesa") {
+      if (dados.recorrencia === "Parcelada") {
+        repeticoes = parseInt(dados.numParcelas);
+        valorFinal = valorTotal / repeticoes;
+      } else if (dados.recorrencia === "Fixa") {
+        repeticoes = 12;
+      }
+    }
+    var dataBase = new Date(dados.dataManual + "T12:00:00");
+    var idAgrupamento = "GRP-" + new Date().getTime();
+    var dataReferencia = new Date(dados.anoReferencia, mesesMap[dados.mesReferencia], 1);
+    for (var i = 0; i < repeticoes; i++) {
+      var dataVencimento = new Date(dataBase.getFullYear(), dataBase.getMonth() + i, dataBase.getDate());
+      var dataRefLoop = new Date(dataReferencia.getFullYear(), dataReferencia.getMonth() + i, 1);
+      var labelParcelas = (dados.recorrencia === "Parcelada") ? (i+1)+"/"+repeticoes : (dados.recorrencia === "Fixa" ? "Fixa" : "1/1");
+      sheet.appendRow([
+        dados.tipo, dataVencimento, dados.descricao, valorFinal,
+        dados.cartao, dados.categoria, dados.subcategoria, dados.tags,
+        tipoRecorrencia, labelParcelas, idAgrupamento, dataRefLoop, dados.isCredito
+      ]);
+    }
+    return ContentService.createTextOutput("Sucesso").setMimeType(ContentService.MimeType.TEXT);
+  } catch (err) {
+    return ContentService.createTextOutput("Erro: " + err).setMimeType(ContentService.MimeType.TEXT);
+  }
+}

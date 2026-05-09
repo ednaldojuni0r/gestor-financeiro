@@ -630,15 +630,14 @@ async function confirmDelete(){
 async function saveEdit(){
   if(editingIdx===null)return;
   var d=allData[editingIdx];if(!d)return;
-  var desc=document.getElementById('eDesc').value.trim(),valorRaw=document.getElementById('eValor').value,dataVal=document.getElementById('eData').value,mesRef=document.getElementById('eMesRef').value,anoRef=document.getElementById('eAnoRef').value;
+  var desc=document.getElementById('eDesc').value.trim(),valorRaw=document.getElementById('eValor').dataset.rawValue||document.getElementById('eValor').value,dataVal=document.getElementById('eData').value,mesRef=document.getElementById('eMesRef').value,anoRef=document.getElementById('eAnoRef').value;
   if(!desc||!valorRaw||!dataVal||!mesRef){showModalMsg('err','⚠️ Preencha Data, Mês/Ano, Descrição e Valor.');return;}
   var btn=document.getElementById('eSaveBtn');btn.disabled=true;btn.textContent='💾 Salvando...';
   var dtParts=dataVal.split('-');var dataFmt=dtParts[2]+'/'+dtParts[1]+'/'+dtParts[0];
-  var valorLimpo=String(valorRaw).replace(/\./g,'').replace(',','.');
-  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:valorLimpo,cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
+  var payload={acao:'update',rowIndex:d.rowIndex,tipo:modalTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:valorRaw,cartao:document.getElementById('eCartao').value,categoria:document.getElementById('eCat').value,subcategoria:document.getElementById('eSubcat').value,tags:document.getElementById('eTag').value,isCredito:document.getElementById('eCredito').value,recorrencia:'Única',numParcelas:1};
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
-    d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorLimpo);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
+    d.tipo=modalTipo;d.data=dataFmt;d.desc=desc;d.valor=parseFloat(valorRaw);d.cat=payload.categoria;d.subcat=payload.subcategoria;d.cartao=payload.cartao;d.tags=payload.tags;d.credito=payload.isCredito;
     var mesLower={'Janeiro':'janeiro','Fevereiro':'fevereiro','Março':'março','Abril':'abril','Maio':'maio','Junho':'junho','Julho':'julho','Agosto':'agosto','Setembro':'setembro','Outubro':'outubro','Novembro':'novembro','Dezembro':'dezembro'};
     d.mes=(mesLower[mesRef]||mesRef.toLowerCase())+'/'+String(anoRef).slice(2);d.mesKey=toMK(d.mes);
     doSync();showModalMsg('ok','✅ Alteração salva!');
@@ -660,11 +659,10 @@ function refreshCatSelect(){var cats=(configData.categorias&&configData.categori
 function onCatChange(){var cat=document.getElementById('fCat').value;var cats=(configData.categorias&&configData.categorias[formTipo])?configData.categorias[formTipo]:{};var subs=(cats&&cats[cat])?cats[cat]:[];var sel=document.getElementById('fSubcat');sel.innerHTML='<option value="">Selecione...</option>';subs.forEach(function(s){sel.innerHTML+='<option value="'+s+'">'+s+'</option>';});}
 function onRecChange(){document.getElementById('fParcelasWrap').style.display=document.getElementById('fRec').value==='Parcelada'?'flex':'none';}
 async function submitForm(){
-  var desc=document.getElementById('fDesc').value.trim(),valorRaw=document.getElementById('fValor').value,dataVal=document.getElementById('fData').value,mesRef=document.getElementById('fMesRef').value,anoRef=document.getElementById('fAnoRef').value,rec=document.getElementById('fRec').value,nParcEl=document.getElementById('fParcelas');
+  var desc=document.getElementById('fDesc').value.trim(),valorRaw=document.getElementById('fValor').dataset.rawValue||document.getElementById('fValor').value,dataVal=document.getElementById('fData').value,mesRef=document.getElementById('fMesRef').value,anoRef=document.getElementById('fAnoRef').value,rec=document.getElementById('fRec').value,nParcEl=document.getElementById('fParcelas');
   if(!desc||!valorRaw||!dataVal||!mesRef){showFormMsg('warn','⚠️ Preencha: Tipo, Data, Mês/Ano, Descrição e Valor.');return;}
   if(rec==='Parcelada'&&(!nParcEl.value||parseInt(nParcEl.value)<2)){showFormMsg('warn','⚠️ Informe o número de parcelas (mínimo 2).');return;}
-  var valorLimpo=String(valorRaw).replace(/\./g,'').replace(',','.');
-  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:valorLimpo,cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'Única':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
+  var payload={acao:'insert',tipo:formTipo,dataManual:dataVal,mesReferencia:mesRef,anoReferencia:parseInt(anoRef),descricao:desc,valorTotal:valorRaw,cartao:document.getElementById('fCartao').value,categoria:document.getElementById('fCat').value,subcategoria:document.getElementById('fSubcat').value,tags:document.getElementById('fTag').value,recorrencia:formTipo==='Receita'?'Única':rec,numParcelas:rec==='Parcelada'?parseInt(nParcEl.value):1,isCredito:document.getElementById('fCredito').value};
   var btn=document.getElementById('submitBtn');btn.disabled=true;btn.textContent=rec==='Parcelada'?'💾 Salvando '+payload.numParcelas+' parcelas...':rec==='Fixa'?'💾 Salvando 12 meses...':'💾 Salvando...';
   try{
     await fetch(ASU,{method:'POST',body:JSON.stringify(payload),mode:'no-cors'});
@@ -681,8 +679,9 @@ document.addEventListener('DOMContentLoaded',function(){
   if(!el)return;
   el.addEventListener('input',function(){
     var v=this.value.replace(/[^0-9]/g,'');
-    if(!v){this.value='';return;}
+    if(!v){this.value='';this.dataset.rawValue='';return;}
     var n=parseInt(v)/100;
+    this.dataset.rawValue=n.toString();
     this.value=n.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
   });
 });

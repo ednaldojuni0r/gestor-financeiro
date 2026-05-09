@@ -470,19 +470,34 @@ function hideBanner(){document.getElementById('banner').className='banner hidden
 /**
  * Função chamada quando usuário clica em "Entrar com Google"
  */
-function handleGoogleLogin() {
-  // Redireciona para a URL do Google Apps Script que iniciará o OAuth
-  // O Google Apps Script solicitará permissão e redirecionará de volta
-  var loginUrl = ASU + '?action=checkAuth';
-  window.location.href = loginUrl;
+async function handleGoogleLogin() {
+  // Mostrar feedback de carregamento
+  var btn = document.querySelector('.google-btn');
+  var originalText = btn.innerHTML;
+  btn.innerHTML = '<div style="width:20px;height:20px;border:3px solid #000;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;"></div> Conectando...';
+  btn.disabled = true;
+  
+  // Verificar autenticação
+  var authenticated = await checkAuthentication();
+  
+  if (!authenticated) {
+    // Se não conseguiu autenticar, restaurar botão
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
 }
+
+// Adicionar animação de loading
+var style = document.createElement('style');
+style.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+document.head.appendChild(style);
 
 /**
  * Verifica se o usuário está autenticado
  */
 async function checkAuthentication() {
   try {
-    var response = await fetch(ASU + '?action=checkAuth&t=' + Date.now());
+    var response = await fetch(ASU + '?ajax=true&t=' + Date.now());
     var data = await response.json();
     
     if (data.isAuthorized) {
@@ -511,18 +526,17 @@ async function checkAuthentication() {
       document.getElementById('loginScreen').style.display = 'flex';
       document.getElementById('appContainer').classList.remove('active');
       
-      if (data.error || data.needsAuth) {
-        var errorMsg = data.erro || 'Você precisa fazer login com uma conta autorizada.';
-        document.getElementById('loginError').textContent = errorMsg;
-        document.getElementById('loginError').style.display = 'block';
-      }
+      // Mostrar erro com o email que tentou acessar
+      var errorMsg = 'O email ' + (data.email || 'não identificado') + ' não tem permissão para acessar este sistema. Entre em contato com o administrador.';
+      document.getElementById('loginError').textContent = errorMsg;
+      document.getElementById('loginError').style.display = 'block';
       return false;
     }
   } catch (error) {
     console.error('Erro ao verificar autenticação:', error);
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('appContainer').classList.remove('active');
-    document.getElementById('loginError').textContent = 'Erro ao conectar com o servidor. Tente novamente.';
+    document.getElementById('loginError').textContent = 'Erro ao conectar com o servidor. Verifique se você está logado no Google e tente novamente.';
     document.getElementById('loginError').style.display = 'block';
     return false;
   }

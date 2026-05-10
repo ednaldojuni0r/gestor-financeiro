@@ -313,6 +313,48 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0
       <div id="txBody"></div>
     </div>
   </div>
+  
+ <!-- ═══ PAINEL DE FILTROS AVANÇADOS ═══ -->
+    <div class="filters-panel">
+      <div class="section-hdr" style="margin-bottom:14px;">
+        <span style="font-family:'Syne',sans-serif;font-size:14px;font-weight:600;">🔍 Filtros Avançados</span>
+        <div class="filter-actions">
+          <span class="filter-count" id="filterCount" style="display:none;"></span>
+          <button class="clear-filters-btn" onclick="clearAllFilters()">✕ Limpar Filtros</button>
+        </div>
+      </div>
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Tipo</label>
+          <select class="filter-select" id="filterTipo" onchange="applyAdvancedFilters()">
+            <option value="">Todos</option>
+            <option value="Receita">Receita</option>
+            <option value="Despesa">Despesa</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Categoria</label>
+          <select class="filter-select" id="filterCategoria" onchange="applyAdvancedFilters()">
+            <option value="">Todas</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Buscar</label>
+          <input type="text" class="filter-input" id="filterBusca" placeholder="Descrição ou tags..." oninput="applyAdvancedFilters()">
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="setTxFilter('todos',this)">Todos</button>
+      <button class="filter-btn" onclick="setTxFilter('Receita',this)">Receitas</button>
+      <button class="filter-btn" onclick="setTxFilter('Despesa',this)">Despesas</button>
+    </div>
+    <div class="tx-table">
+      <div class="tx-head"><span>Descrição</span><span>Categoria</span><span>Mês Ref.</span><span>Data</span><span style="text-align:right">Valor</span><span>Tipo</span></div>
+      <div id="txBody"></div>
+    </div>
+  </div>
 
   <!-- NOVO -->
   <div class="view" id="view-novo">
@@ -407,7 +449,18 @@ function pCSV(text){var lines=text.split('\n').filter(function(l){return l.trim(
 var TT={backgroundColor:'#161b2a',borderColor:'rgba(255,255,255,0.08)',borderWidth:1,titleColor:'#e8eaf0',bodyColor:'#6b7280',titleFont:{family:'Syne',weight:'600'},bodyFont:{family:'DM Sans'}};
 var TK={color:'#6b7280',font:{family:'DM Sans',size:11}};
 var GR={color:'rgba(255,255,255,0.04)'};
-var FB=[];
+var FB=[
+  {tipo:'Receita',data:'01/01/2026',desc:'Reembolso Thiago',valor:123.20,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'Não',rowIndex:2},
+  {tipo:'Receita',data:'18/01/2026',desc:'Rendimento automático',valor:62.71,cat:'Investimentos',subcat:'Rendimento Automático',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'Não',rowIndex:3},
+  {tipo:'Receita',data:'18/01/2026',desc:'Reembolsos Diversos',valor:189.72,cat:'Outros',subcat:'Outras receitas',mes:'janeiro/26',cartao:'',tags:'N/A',credito:'Não',rowIndex:4},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Corte de Cabelo',valor:169.90,cat:'Pessoais',subcat:'Barbeiro',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'Não',rowIndex:5},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Shein',valor:322.44,cat:'Vestiário',subcat:'Roupas',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'Não',rowIndex:6},
+  {tipo:'Despesa',data:'02/01/2026',desc:'ACM Academia (4/6)',valor:129.88,cat:'Pessoais',subcat:'Academia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'Não',rowIndex:7},
+  {tipo:'Despesa',data:'02/01/2026',desc:'Aula de Inglês',valor:320.00,cat:'Educação',subcat:'Cursos Online',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'Não',rowIndex:8},
+  {tipo:'Despesa',data:'04/01/2026',desc:'Financiamento',valor:1332.54,cat:'Contas',subcat:'Financiamento',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'Não',rowIndex:9},
+  {tipo:'Despesa',data:'10/01/2026',desc:'Condomínio',valor:555.09,cat:'Contas',subcat:'Condomínio',mes:'janeiro/26',cartao:'',tags:'Contas',credito:'Não',rowIndex:10},
+  {tipo:'Despesa',data:'16/01/2026',desc:'Terapia',valor:120.00,cat:'Saúde',subcat:'Terapia',mes:'janeiro/26',cartao:'',tags:'Pessoal',credito:'Não',rowIndex:11}
+];
 function setStatus(c,m){document.getElementById('statusDot').className='dot '+c;document.getElementById('statusText').textContent=m;}
 function showBanner(t,h){var b=document.getElementById('banner');b.className='banner '+t;b.innerHTML=h;}
 function hideBanner(){document.getElementById('banner').className='banner hidden';}
